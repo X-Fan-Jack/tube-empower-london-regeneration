@@ -14,7 +14,7 @@
 ### Pupulation data
 **File name**: pop_02to20_MSOA.csv   
 **Format**: CSV   
-**Data source**: [UK Gov - Population](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/lowersuperoutputareamidyearpopulationestimates) provided by Wang, Jingyi   
+**Data source**: [ONS - Middle Super Output Area population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/middlesuperoutputareamidyearpopulationestimates) provided by Wang, Jingyi   
 **Final process**: Gong, Yubin.   
 **Sample**:     
 |MSOA11CD|2002pop|2003pop|...|   
@@ -26,7 +26,7 @@
 ### Housing price
 **File name**: housing_price_96to22.csv   
 **Format**: CSV   
-**Data source**: [Median - housing price](https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/hpssadataset2medianhousepricebymsoaquarterlyrollingyear); [Mean - housing price](https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/hpssadataset3meanhousepricebymsoaquarterlyrollingyear)  provided by Wang, Jingyi; Gong, Yubin    
+**Data source**: [ONS - Median house prices by middle layer super output area](https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/hpssadataset2medianhousepricebymsoaquarterlyrollingyear); [ONS - Mean house prices by middle layer super output area](https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/hpssadataset3meanhousepricebymsoaquarterlyrollingyear)  provided by Wang, Jingyi; Gong, Yubin    
 **Final process**: Gong, Yubin.   
 **Sample**:    
 |Local authority code|Local authority name|MSOA code|MSOA name|1996_mean|...|   
@@ -37,7 +37,7 @@
 ### Income
 **File name**: income_01to12.csv; income_12to18.csv    
 **Format**: CSV    
-**Data source**: [Income 01-12](https://data.london.gov.uk/dataset/household-income-estimates-small-areas) provided by Wang, Jingyi; [Income 12-18](https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/smallareaincomeestimatesformiddlelayersuperoutputareasenglandandwales) provided by Gong, Yubin    
+**Data source**: [London Datastore - Household Income Estimates for Small Areas 01-12](https://data.london.gov.uk/dataset/household-income-estimates-small-areas) provided by Wang, Jingyi; [ONS - Income estimates for small areas, 12-18](https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/smallareaincomeestimatesformiddlelayersuperoutputareasenglandandwales) provided by Gong, Yubin    
 **Final process**: Gong, Yubin; Wang, Jingyi;    
 **Sample**:    
 |MSOA_code|MSOA_name|Local_authority_code|Local_authority_name|2012_annual|...|   
