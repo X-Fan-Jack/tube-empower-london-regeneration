@@ -56,8 +56,17 @@
 **MOSA_CODE**: E02000001-E02000983   
 
 ### Building footprint
-**Format**: Geojson, polygon   
-**Attributes**: buidling height, landuse/building type, 
+**File name**: building_yyyy.geojson   
+**Format**: Geojson, Polygon    
+**Data source**: [Digimap - OS Data Download](https://digimap.edina.ac.uk/roam/download/os)   
+**Processed by**: Xia, Fan   
+**Attributes**: absh2, relh2,  
+**CRS**: EPSG4326   
+**Example**:   
+|absh2|relh2|
+|--|--|
+|13.1|11.3|
+|7.0|4.0| 
 
 ### Tube line
 **File name**: london_tube.json   
