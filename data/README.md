@@ -49,7 +49,7 @@
 ### MOSA
 **File name**: MSOA_London.json   
 **Format**: Geojson, polygon   
-**Data source**: [MSOA (Dec 2001) Boundaries ONS](https://geoportal.statistics.gov.uk/datasets/ons::msoa-dec-2001-boundaries-ew-bfc/about) provide by Xia, Fan   
+**Data source**: [ONS - MSOA (Dec 2001) Boundaries](https://geoportal.statistics.gov.uk/datasets/ons::msoa-dec-2001-boundaries-ew-bfc/about) provide by Xia, Fan   
 **Processed by**: Xia, Fan   
 **Attributes**: MOSA_Code, MOSA_Name   
 **CRS**: EPSG4326   
