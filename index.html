@@ -7,10 +7,39 @@
     <script src="js/mapbox-gl.js"></script>
     <script src="js/script.js"></script>
 </head>
-<body>
-<div id="map"></div>
+<body style="height: 600px; width: auto;">
+<div id="map" style="height: 100%; width: 100%;"></div>
 <script>
-    loadBasicMap('map');
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamFjay14aWEiLCJhIjoiY2tzeWI0ZzY4MmhiazJucGdmOHpseWMydiJ9.BGwgjm240AKVbV60tdMJBQ';
+    basemap_style_URL = 'mapbox://styles/jack-xia/clea1ea2400ba01mt3zvc4yhm';
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: basemap_style_URL,
+        center: [-0.1292638, 51.5254607],
+        zoom: 13,
+    });
+
+
+    map.on('load', () => {
+        map.addSource('london_tube', {
+            'type': 'geojson',
+            'data': 'https://docs.mapbox.com/mapbox-gl-js/assets/ne_50m_urban_areas.geojson'
+        });
+        map.addLayer(
+            {
+                'id': 'urban-areas-fill',
+                'type': 'fill',
+                'source': 'urban-areas',
+                'layout': {},
+                'paint': {
+                    'fill-color': '#f08',
+                    'fill-opacity': 0.4
+                }
+            },
+            firstSymbolId
+        );
+    });
 </script>
 </body>
 </html>

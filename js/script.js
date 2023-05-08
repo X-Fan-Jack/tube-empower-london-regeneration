@@ -14,19 +14,6 @@ function loadBasicMap(container_id) {
     });
 }
 
-function readJSON(filepath){
-    // return a json
-    $.ajax({
-        url: filepath,
-        dataType: 'json',
-        success: function(data) {
-            return data
-        },
-        error: function(error) {
-            console.log(error);
-        }
-    });
-}
 
 function addMapSource(source_name = 'test', source_type = 'geojson', data){
     map.addSource(sourcename, {
