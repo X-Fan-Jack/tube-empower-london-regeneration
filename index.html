@@ -31,10 +31,12 @@
         }
 
         .map-overlay .map-overlay-inner {
-            background-color: #fff;
+            background-color: rgba(255,255,255,0);
+            background-image: url(fd-images/bg.png);
+            background-size: 100% 100%;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
             border-radius: 3px;
-            padding: 10px;
+            padding: 10px 20px 10px 20px;
             margin-bottom: 10px;
         }
 
@@ -47,6 +49,7 @@
             line-height: 24px;
             display: block;
             margin: 0 0 10px;
+            color: #fff;
         }
 
         .map-overlay label {
@@ -75,6 +78,7 @@
         .map-overlay p.credit {
             margin: 0;
             padding: 0;
+            color: white;
         }
 
         .map-overlay p.controls {
@@ -120,11 +124,16 @@
             margin-right: 10px;
             border-radius: 5px;
         }
-
+        
+		.map-overlay2>div>span{
+			color:white;
+		}
         #legend {
-            background: rgb(255, 255, 255);
+            background: rgba(255, 255, 255,0);
+            background-image: url(fd-images/bglong.png);
+            background-size: 100% 100%;
             opacity: 1;
-            padding: 10px;
+            padding: 12px;
             padding-top: 40px;
             margin-bottom: 40px;
             line-height: 20px;
@@ -135,13 +144,14 @@
         }
 
         #legend-title {
-            background: rgb(255, 255, 255);
+            background: rgba(255, 255, 255,0);
             opacity: 1;
             margin-right: 25px;
             min-width: 140px;
             /* line height divides space between options */
             line-height: 15px;
             margin-bottom: 260px;
+            color: white;
         }
 
         .legend-key {
@@ -163,21 +173,21 @@
         <table>
             <tr>
                 <td>
-                    <label id='year1'>1860</label>
+                    <label id='year1' style="color: white;">1860</label>
                 </td>
                 <td>
                     <input id='slider' type='range' min='1860' max='2022' step='1' value='1860' list='tickmarks'
-                           title="1860"/>
+                           title="1860" disabled/>
                     <datalist id="tickmarks">
                     </datalist>
                 </td>
                 <td>
-                    <label id='year2'>2022</label>
+                    <label id='year2' style="color: white;">2022</label>
                 </td>
             </tr>
         </table>
         <p class="credit">Tube data: <a href="http://crowding.data.tfl.gov.uk/">TFL</a>
-        <div class="buttons">
+        <div class="buttons" style="display: none">
             <button id="startButton">Start</button>
             <button id="stopButton">Stop</button>
             <p class="credit">
@@ -188,16 +198,16 @@
 <div class='map-overlay2' id='legend-title'>Legend Title</Title></div>
 <script>
     const tubeLegendValues = [
-        { value: 'WaterlooCi', color: '#76d0bd' },
-        { value: 'Bakerloo', color: '#894e24' },
-        { value: 'Central', color: '#dc241f' },
-        { value: 'District', color: '#007229' },
-        { value: 'Jubilee', color: '#2d3039' },
-        { value: 'Northern', color: '#000000' },
-        { value: 'Piccadilly', color: '#0019a8' },
-        { value: 'Victoria', color: '#00a0e2' },
-        { value: 'H&C and Circle', color: '#ffce00' },
-        { value: 'Metropolitan', color: '#751056' },
+        {value: 'WaterlooCi', color: '#76d0bd'},
+        {value: 'Bakerloo', color: '#894e24'},
+        {value: 'Central', color: '#dc241f'},
+        {value: 'District', color: '#007229'},
+        {value: 'Jubilee', color: '#2d3039'},
+        {value: 'Northern', color: '#000000'},
+        {value: 'Piccadilly', color: '#0019a8'},
+        {value: 'Victoria', color: '#00a0e2'},
+        {value: 'H&C and Circle', color: '#ffce00'},
+        {value: 'Metropolitan', color: '#751056'},
     ];
 
     const tickmarks = document.getElementById('tickmarks');
@@ -225,9 +235,15 @@
             slider.value = currentValue.toString();
             if (currentValue === maxValue) {
                 clearInterval(intervalId);
+
+                // reset autoplay
+                slider.value = parseInt(slider.min);
+                startButton.dispatchEvent(new Event('click'));
             }
             slider.dispatchEvent(new Event('change'));
         }, 100);
+
+
     });
     stopButton.addEventListener('click', function () {
         clearInterval(intervalId);
@@ -236,7 +252,6 @@
     slider.addEventListener('change', function () {
         slider.title = slider.value;
         updateByYear(slider.value);
-        console.log(slider.value);
     });
 
 
@@ -312,6 +327,8 @@
 
         addLegend();
         slider.dispatchEvent(new Event('change'));
+        startButton.dispatchEvent(new Event('click')); // autoplay
+
     });
 
     function updateByYear(year) {
