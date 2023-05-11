@@ -17,6 +17,10 @@
     var datafilter = 'pop_change_2003';
     var mapOption, barOption;
     var data_Newham;
+    const data_json = {
+        "type": "FeatureCollection",
+        "features": []
+    };
 
     var myChart = echarts.init(document.getElementById('myChart'));
 
@@ -30,14 +34,24 @@
         if (xhr.readyState === 4 && xhr.status === 200) {
             // Parse GeoJSON data
             data_Newham = JSON.parse(xhr.responseText);
-            // Add map component
-            echarts.registerMap('Newham', {geoJSON: data_Newham});
 
-            var data = filterDataByField(datafilter, data_Newham);
+            for (const feature of data_Newham.features) {
+                data_json.features.push({
+                    "type": "Feature",
+                    "properties": feature.properties,
+                    "geometry": feature.geometry
+                });
+            }
+
+
+            // Add map component
+            echarts.registerMap('Newham', {geoJSON: data_json});
+
+            var data = filterDataByField(datafilter, data_json);
             data.sort(function (a, b) {
                 return a.value - b.value;
             });
-            console.log(data);
+            // console.log(data);
             mapOption = {
                 geo: [{
                     map: 'Newham',
@@ -93,10 +107,10 @@
     };
 
 
-    function filterDataByField(datafilter, data_Newham) {
+    function filterDataByField(datafilter, data_js) {
         var filterField = datafilter.trim();
 
-        var filteredFeatures = data_Newham.features.map(feature => {
+        var filteredFeatures = data_js.features.map(feature => {
             const { properties } = feature;
             return { name: properties.MSOA_NAME , value: properties[filterField]};
         });
