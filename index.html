@@ -252,7 +252,7 @@
                 startButton.dispatchEvent(new Event('click'));
                 records = [];
             }
-            slider.dispatchEvent(new Event('change'));
+            slider.dispatchEvent(new Event('input'));
         }, 100);
 
 
@@ -261,10 +261,10 @@
         clearInterval(intervalId);
     });
 
-    slider.addEventListener('change', function () {
+    slider.addEventListener('input', function () {
         slider.title = slider.value;
-        updateByYear(slider.value);
         updateYearContent();
+        updateByYear(slider.value);
 
         const value = slider.value;
         var text = '';
@@ -294,14 +294,13 @@
             popup.innerHTML = '';
             popup.appendChild(table);
 
-            // wait 1.5s to show the change
-            stopButton.dispatchEvent(new Event('click'));
-            setTimeout(function () {
-                startButton.dispatchEvent(new Event('click'));
-            }, 1200);
-
         }
     });
+
+    // slider.addEventListener('input', function (){
+    //     updateYearContent();
+    //
+    // });
 
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiamFjay14aWEiLCJhIjoiY2tzeWI0ZzY4MmhiazJucGdmOHpseWMydiJ9.BGwgjm240AKVbV60tdMJBQ';
@@ -375,7 +374,7 @@
         );
 
         addLegend();
-        slider.dispatchEvent(new Event('change'));
+        slider.dispatchEvent(new Event('input'));
         startButton.dispatchEvent(new Event('click')); // autoplay
         getEventList();
 
