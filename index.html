@@ -232,7 +232,7 @@
     const popup = document.getElementById('popup');
     const maxRecords = 8;
     const eventList = [];
-    const records = [];
+    var records = [];
 
     let intervalId;
 
@@ -250,6 +250,7 @@
                 // reset autoplay
                 slider.value = parseInt(slider.min);
                 startButton.dispatchEvent(new Event('click'));
+                records = [];
             }
             slider.dispatchEvent(new Event('change'));
         }, 100);
@@ -297,7 +298,7 @@
             stopButton.dispatchEvent(new Event('click'));
             setTimeout(function () {
                 startButton.dispatchEvent(new Event('click'));
-            }, 1500);
+            }, 1200);
 
         }
     });
