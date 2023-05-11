@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistic Analysis</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div id="myChart" style="width: 600px;height:400px;"></div>
+<input type="button" value="change" id="changeButton" onclick="changeStyle()">
+
+<script>
+    const geojsonURLNewhame = 'https://raw.githubusercontent.com/X-Fan-Jack/tube-empower-london-regeneration/jack/data/msoa_geojson_NH_data.geojson';
+    var chartStyle = 'Map';
+    var datafilter = 'pop_change_2003';
+    var mapOption, barOption;
+    var data_Newham;
+
+    var myChart = echarts.init(document.getElementById('myChart'));
+
+    myChart.showLoading();
+
+    // Load GeoJSON data using XMLHttpRequest
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', geojsonURLNewhame);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Parse GeoJSON data
+            data_Newham = JSON.parse(xhr.responseText);
+            // Add map component
+            echarts.registerMap('Newham', {geoJSON: data_Newham});
+
+            var data = filterDataByField(datafilter, data_Newham);
+            data.sort(function (a, b) {
+                return a.value - b.value;
+            });
+            console.log(data);
+            mapOption = {
+                geo: [{
+                    map: 'Newham',
+                }],
+                visualMap: {
+                    left: 'right',
+                    min: -1,
+                    max: 1,
+                    inRange: {
+                        // prettier-ignore
+                        color: ['#313695',
+                            '#4575b4',
+                            '#e0f3f8',
+                            '#ffffbf',
+                            '#fee090',
+                            '#d73027',
+                            '#a50026']
+                    },
+                    text: ['High', 'Low'],
+                    calculable: true
+                },
+                toolbox: {
+                    show: true,
+                    //orient: 'vertical',
+                    left: 'left',
+                    top: 'top',
+                    feature: {
+                        dataView: { readOnly: false },
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                series: [
+                    {
+                        name: 'MSOA_CODE ' + datafilter,
+                        type: 'map',
+                        map: 'Newham',
+                        animationDurationUpdate: 1000,
+                        universalTransition: true,
+                        emphasis: {
+                            label: {
+                                show: true
+                            }
+                        },
+                        data: data,
+                    }
+                ]
+            };
+
+            myChart.setOption(mapOption);
+            myChart.hideLoading();
+        }
+    };
+
+
+    function filterDataByField(datafilter, data_Newham) {
+        var filterField = datafilter.trim();
+
+        var filteredFeatures = data_Newham.features.map(feature => {
+            const { properties } = feature;
+            return { name: properties.MSOA_NAME , value: properties[filterField]};
+        });
+
+        // 最后，返回筛选后的数据
+        return filteredFeatures;
+    }
+
+    function changeStyle() {
+        if (chartStyle === 'Map') {
+            myChart.setOption(barOption);
+            chartStyle = 'Bar';
+        } else if (chartStyle === 'Bar') {
+            myChart.setOption(mapOption);
+            chartStyle = 'Map';
+        }
+        console.log("You have change the style to " + chartStyle);
+    };
+
+
+
+
+
+</script>
+</body>
+</html>
