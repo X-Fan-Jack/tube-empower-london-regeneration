@@ -113,16 +113,27 @@
             background-color: #e77715;
         }
 
+        .map-overlay1 {
+            background: rgba(9, 9, 9, 0.3);
+            position: absolute;
+            width: 360px;
+            height: 250px;
+            top: 150px;
+            left: 10px;
+            padding: 10px;
+        }
+
         .map-overlay2 {
             position: absolute;
             bottom: 0;
-            right: 0;
+            left: 27px;
             margin-right: 10px;
             border-radius: 5px;
         }
 
         #legend {
             background: rgb(255, 255, 255);
+            left: 20px;
             opacity: 1;
             padding: 10px;
             padding-top: 40px;
@@ -167,7 +178,7 @@
                 </td>
                 <td>
                     <input id='slider' type='range' min='1860' max='2022' step='1' value='1860' list='tickmarks'
-                           title="1860" disabled/>
+                           title="1860"/>
                     <datalist id="tickmarks">
                     </datalist>
                 </td>
@@ -176,13 +187,18 @@
                 </td>
             </tr>
         </table>
-        <p class="credit">Tube data: <a href="http://crowding.data.tfl.gov.uk/">TFL</a>
-        <div class="buttons" style="display: none">
+        <div class="buttons">
+            Tube data: <a href="http://crowding.data.tfl.gov.uk/">TFL</a>
             <button id="startButton">Start</button>
             <button id="stopButton">Stop</button>
             <p class="credit">
         </div>
     </div>
+</div>
+<div class='map-overlay1'>
+    <h2 id="timetxt" style='color: white; margin: 0;'>Now you are in 1990</h2>
+    <hr>
+    <div id="popup" style="color: white"></div>
 </div>
 <div class='map-overlay2' id='legend'></div>
 <div class='map-overlay2' id='legend-title'>Legend Title</Title></div>
@@ -213,12 +229,17 @@
     const startButton = document.getElementById('startButton');
     const stopButton = document.getElementById('stopButton');
     const slider = document.getElementById('slider');
+    const popup = document.getElementById('popup');
+    const maxRecords = 8;
+    const eventList = [];
+    const records = [];
 
     let intervalId;
 
     startButton.addEventListener('click', function () {
         let currentValue = parseInt(slider.value);
         const maxValue = parseInt(slider.max);
+        clearInterval(intervalId);
 
         intervalId = setInterval(function () {
             currentValue++;
@@ -242,6 +263,43 @@
     slider.addEventListener('change', function () {
         slider.title = slider.value;
         updateByYear(slider.value);
+        updateYearContent();
+
+        const value = slider.value;
+        var text = '';
+
+        for (let i = 0; i < eventList.length; i++) {
+            if (eventList[i][0] == value) {
+                text = value + ': ' + eventList[i][1] + ' ' + eventList[i][2];
+                break;
+            }
+        }
+        if (text != '') {
+            // Add new record to beginning of array
+            records.unshift(text);
+            // Limit records array to maxRecords items
+            records.splice(maxRecords);
+
+            let table = document.createElement('table');
+
+            for (let i = 0; i < records.length; i++) {
+                let tr = document.createElement('tr');
+                let td = document.createElement('td');
+                td.innerText = records[i];
+                tr.appendChild(td);
+                table.appendChild(tr);
+            }
+            let popup = document.getElementById('popup');
+            popup.innerHTML = '';
+            popup.appendChild(table);
+
+            // wait 1.5s to show the change
+            stopButton.dispatchEvent(new Event('click'));
+            setTimeout(function () {
+                startButton.dispatchEvent(new Event('click'));
+            }, 1500);
+
+        }
     });
 
 
@@ -318,6 +376,7 @@
         addLegend();
         slider.dispatchEvent(new Event('change'));
         startButton.dispatchEvent(new Event('click')); // autoplay
+        getEventList();
 
     });
 
@@ -347,6 +406,35 @@
 
             legend.appendChild(legendItem);
         });
+    };
+
+    function updateYearContent() {
+        document.getElementById("timetxt").innerHTML = "Now you are in " + slider.value;
+    }
+
+    function getEventList(){
+        var geojson;
+        fetch('https://raw.githubusercontent.com/X-Fan-Jack/tube-empower-london-regeneration/master/data/london_tube.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojson = data;
+
+                geojson.features.forEach((feature) => {
+                    // Get the name of the line and the time it was built and last updated
+                    const lineName = feature.properties.Line_name;
+                    const builtTime = parseInt(feature.properties.built_time);
+                    const lastExtensionTime = parseInt(feature.properties.last_extension);
+
+                    // Construct two events based on build time and last update time
+                    const builtEvent = [builtTime, lineName, 'built up'];
+                    const extendedEvent = [lastExtensionTime, lineName,'extended'];
+
+                    // Add these two events to the results list
+                    eventList.push(builtEvent, extendedEvent);
+
+                });
+            });
+
     };
 
 
