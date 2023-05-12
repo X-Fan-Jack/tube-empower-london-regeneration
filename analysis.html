@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Statistic Analysis</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -14,13 +14,17 @@
 <script>
     const geojsonURLNewhame = 'https://raw.githubusercontent.com/X-Fan-Jack/tube-empower-london-regeneration/jack/data/msoa_geojson_NH_data.geojson';
     var chartStyle = 'Map';
-    var datafilter = 'pop_change_2003';
+    var datafilter = 'HP_med_change_2002_2020';  // Change the data which you want to show
     var mapOption, barOption;
+    var dataMax, dataMin;
     var data_Newham;
     const data_json = {
         "type": "FeatureCollection",
         "features": []
     };
+    // Set the max/min value
+    dataMax = 3.1;
+    dataMin = 1;
 
     var myChart = echarts.init(document.getElementById('myChart'));
 
@@ -38,7 +42,9 @@
             for (const feature of data_Newham.features) {
                 data_json.features.push({
                     "type": "Feature",
-                    "properties": feature.properties,
+                    "properties": Object.assign(
+                        feature.properties, {name: feature.properties.MSOA_NAME}
+                    ),
                     "geometry": feature.geometry
                 });
             }
@@ -47,19 +53,22 @@
             // Add map component
             echarts.registerMap('Newham', {geoJSON: data_json});
 
+            // { name: properties.MSOA_NAME , value: properties[filterField]}
             var data = filterDataByField(datafilter, data_json);
             data.sort(function (a, b) {
                 return a.value - b.value;
             });
-            // console.log(data);
+
+
             mapOption = {
                 geo: [{
                     map: 'Newham',
                 }],
                 visualMap: {
                     left: 'right',
-                    min: -1,
-                    max: 1,
+                    min: dataMin,
+                    max: dataMax,
+                    precision: 10,
                     inRange: {
                         // prettier-ignore
                         color: ['#313695',
@@ -84,12 +93,17 @@
                         saveAsImage: {}
                     }
                 },
+                tooltip: {
+                    trigger: 'item',
+                    showDelay: 0,
+                    transitionDuration: 0.2
+                },
                 series: [
                     {
                         name: 'MSOA_CODE ' + datafilter,
                         type: 'map',
                         map: 'Newham',
-                        animationDurationUpdate: 1000,
+                        animationDurationUpdate: 500,
                         universalTransition: true,
                         emphasis: {
                             label: {
@@ -101,7 +115,37 @@
                 ]
             };
 
-            myChart.setOption(mapOption);
+            barOption = {
+                xAxis: {
+                    type: 'value'
+                },
+                yAxis: {
+                    type: 'category',
+
+                    axisLabel: {
+                        rotate: 30,
+                        textStyle: {
+                            fontSize: 8, // 设置字体大小
+                        }
+                    },
+                    data: data.map(function (item) {
+                        return item.name;
+                    })
+                },
+                animationDurationUpdate: 500,
+                series: {
+                    type: 'bar',
+                    id: 'bar',
+                    data: data.map(function (item) {
+                        return item.value;
+                    }),
+                    universalTransition: true
+                }
+            };
+
+            // myChart.setOption(barOption);
+            loadChart();
+
             myChart.hideLoading();
         }
     };
@@ -121,14 +165,24 @@
 
     function changeStyle() {
         if (chartStyle === 'Map') {
-            myChart.setOption(barOption);
+            // myChart.setOption(barOption);
             chartStyle = 'Bar';
         } else if (chartStyle === 'Bar') {
-            myChart.setOption(mapOption);
+            // myChart.setOption(mapOption);
             chartStyle = 'Map';
         }
-        console.log("You have change the style to " + chartStyle);
+        loadChart();
+        // console.log("You have change the style to " + chartStyle);
     };
+
+    function loadChart(){
+        if (chartStyle === 'Map') {
+            myChart.setOption(barOption);
+        } else if (chartStyle === 'Bar') {
+            myChart.setOption(mapOption);
+        }
+    }
+
 
 
 
