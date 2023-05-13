@@ -97,3 +97,28 @@
 | ------------ | ------------ | ---------------- |
 | WaterlooCi | 1898       | 1994           |
 | Bakerloo   | 1906       | 1917           |
+
+### Tube line
+
+**File name**: TfL_lines_update.shp
+**Format**: shapefile
+**Data source**: Week2 Practical of CASA03
+**Processed by**: Pin Lyu
+**Attributes**: Lines, geometry
+**CRS**: EPSG4326
+**Example**
+
+### Stations
+
+**File name**: London stations.json
+**Format**: Geojson
+**Data source**: [doogal.co.uk](https://www.doogal.co.uk/london_stations#google_vignette)
+**Processed by**: Pin Lyu
+**Attributes**: Stations, geometry
+**CRS** EPSG4326
+
+### Building Heights
+
+**File name**: LondonBuildingHeights.mbtiles
+**Data source** Week3 practical of CASA03
+**Processed by**: Pin Lyu
