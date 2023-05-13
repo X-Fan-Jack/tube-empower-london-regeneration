@@ -194,7 +194,7 @@
 <div class="draggable-bar"></div>
     <div class='map-overlay top'>
         <div class='map-overlay-inner'>
-            <h2>London MSOA Population Density Annual</h2>
+            <h2></h2>
             <p class="credit">POI data: <a href="http://crowding.data.tfl.gov.uk/">MOSA</a>
             <div class="'buttons">
                 <button id="navigateButton">Back to main map</button>
@@ -202,9 +202,9 @@
             <div class="controls">
             	<div class="clearfix">
                 <select id="layer-select" >
-                    <option value="HP_mean" style="color:black;">House Price</option>
-                    <option value="POP" style="color:black;">Population Density</option>
-                    <option value="INC_Mean" style="color:black;">Income</option>
+                    <option value="HP_mean" style="color:black;">Mean House Price</option>
+                    <option value="POP" style="color:black;">Population</option>
+                    <option value="INC_Mean" style="color:black;">Average Gross Annual Household Income</option>
                 </select>
                 <select id="year-select" >
                     <option value="2002" style="color:black;">2002</option>
@@ -230,9 +230,9 @@
 				</div>
 				<div class="clearfix">
                 <select id="layer-select2" >
-                    <option value="HP_mean" style="color:black;">House Price</option>
-                    <option value="POP" style="color:black;">Population Density</option>
-                    <option value="INC_Mean" style="color:black;">Income</option>
+                    <option value="HP_mean" style="color:black;">Mean House Price</option>
+                    <option value="POP" style="color:black;">Population</option>
+                    <option value="INC_Mean" style="color:black;">Average Gross Annual Household Income(£)</option>
                 </select>
                 <select id="year-select2" >
                     <option value="2002" style="color:black;">2002</option>
@@ -506,7 +506,7 @@ function updateLegend(attribute) {
         });
     }
     else if (attribute === 'HP_mean') {
-    legend.innerHTML = '<h3>Average House Price(£)</h3>';
+    legend.innerHTML = '<h3>Mean House Price(£)</h3>';
     housePriceLegendValues.forEach((item) => {
         let key = document.createElement('span');
             key.className = 'legend-key';
@@ -523,7 +523,7 @@ function updateLegend(attribute) {
     });
 } 
 else if (attribute === 'INC_Mean') {
-    legend.innerHTML = '<h3>Average Income per person(£)</h3>';
+    legend.innerHTML = '<h3>Average Gross Annual Household Income(£)</h3>';
     incomeLegendValues.forEach((item) => {
         let key = document.createElement('span');
             key.className = 'legend-key';
@@ -646,7 +646,7 @@ document.getElementById('layer-select2').addEventListener('input', (event) => {
   handleSelection2();
 });
 document.getElementById("navigateButton").addEventListener("click", function() {
-    window.location.href = "Jubilee2.html";
+    window.location.href = "Part2_2.html";
 });
 
 showLayer('HP_mean', 2002, mapLeft);

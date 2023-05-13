@@ -215,9 +215,9 @@
             </div>
             <div class="controls">
                 <select id="layer-select" onchange="showLayer(this.value, document.getElementById('year').innerText)" value="HP_mean">
-                    <option value="HP_mean" style="color:black">House Price</option>
-                    <option value="POP" style="color:black">Population Density</option>
-                    <option value="INC_Mean" style="color:black">Income</option>
+                    <option value="HP_mean" style="color:black">Mean House Price</option>
+                    <option value="POP" style="color:black">Population</option>
+                    <option value="INC_Mean" style="color:black">Average Gross Annual Household Income</option>
                 </select>
                 
             </div>
@@ -436,7 +436,7 @@ function updateLegend(attribute) {
         });
     }
     else if (attribute === 'HP_mean') {
-    legend.innerHTML = '<h3 style="color: white;">Average House Price(£)</h3>';
+    legend.innerHTML = '<h3 style="color: white;">Mean House Price(£)</h3>';
     housePriceLegendValues.forEach((item) => {
         let key = document.createElement('span');
             key.className = 'legend-key';
@@ -453,7 +453,7 @@ function updateLegend(attribute) {
     });
 } 
 else if (attribute === 'INC_Mean') {
-    legend.innerHTML = '<h3 style="color: white;">Average Income per person(£)</h3>';
+    legend.innerHTML = '<h3 style="color: white;">Average Gross Annual Household Income(£)</h3>';
     incomeLegendValues.forEach((item) => {
         let key = document.createElement('span');
             key.className = 'legend-key';
@@ -601,11 +601,11 @@ document.getElementById('startButton').addEventListener('click', startAnimation)
             
         });
         document.getElementById("navigateButton").addEventListener("click", function() {
-    window.location.href = "compare_map1.html";
+    window.location.href = "Part2_3.html";
     
 });
 document.getElementById("navigateButton2").addEventListener("click", function() {
-    window.location.href = "extension_area_change6.html";
+    window.location.href = "Part2_4.html";
     
 });
 
