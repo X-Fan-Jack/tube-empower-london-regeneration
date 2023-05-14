@@ -216,9 +216,9 @@
                 'type': 'fill',
                 'source': {
                     'type': 'vector',
-                    'url': 'mapbox://pinlyu.a88pfuyq'
+                    'url': 'mapbox://pinlyu.aackmt82'
                 },
-                'source-layer': 'merged_data',
+                'source-layer': 'newdata_area',
                 'layout': {},
                 'paint': {
                     'fill-color': [
@@ -240,9 +240,9 @@
             type: 'fill',
             source: {
                 type: 'vector',
-                url: 'mapbox://pinlyu.a88pfuyq' // Mapbox tileset Map ID
+                url: 'mapbox://pinlyu.aackmt82' // Mapbox tileset Map ID
             },
-            'source-layer': 'merged_data', // name of tilesets
+            'source-layer': 'newdata_area', // name of tilesets
             'layout': {
                 'visibility': 'visible'
             },
@@ -257,14 +257,14 @@
             type: 'line',
             source: {
                 type: 'vector',
-                url: 'mapbox://pinlyu.a88pfuyq' // Your Mapbox tileset Map ID
+                url: 'mapbox://pinlyu.aackmt82' // Your Mapbox tileset Map ID
             },
-            'source-layer': 'merged_data', // name of tilesets
+            'source-layer': 'newdata_area', // name of tilesets
             paint: {
                 'line-color': '#fd8d3c',
                 'line-width': 3
             },
-            filter: ['==', 'MSOA_CODE', '']
+            filter: ['==', 'Code', '']
         });
 
         function createLineChart(data, elementId, color, title, xLabel, yLabel) {
@@ -405,16 +405,16 @@ svg.selectAll(".bar")
 
             if (la.length==1) {   // This if statement is run when the mouse is over a local authority
             
-                var laName = la[0].properties.MSOA_CODE;
-                map.setFilter('lahighlight', ['==', 'MSOA_CODE', laName]);
+                var laName = la[0].properties.Code;
+                map.setFilter('lahighlight', ['==', 'Code', laName]);
 
-                document.getElementById('laname').innerHTML = la[0].properties.MSOA_CODE; // Change the name in the top left box to show the local authority name
+                document.getElementById('laname').innerHTML = la[0].properties.Code; // Change the name in the top left box to show the local authority name
         
                 console.log(la[0].id);
                 console.log(la);
 
             } else {
-                map.setFilter('lahighlight', ['==','MSOA_CODE','null']);
+                map.setFilter('lahighlight', ['==','Code','null']);
                 console.log('No features');
             }
 
@@ -505,9 +505,9 @@ document.getElementById('changeContentButton').addEventListener('click', functio
 let chartTitle, xLabel, yLabel;
     switch(selectedAttribute) {
         case 'HP_mean_change':
-            chartTitle = "Average House Price Change Rate(%) vs Year";
+            chartTitle = "Mean House Price Change Rate(%) vs Year";
             xLabel = "Year";
-            yLabel = "Average House Price Change Rate(%)";
+            yLabel = "Mean House Price Change Rate(%)";
             break;
         case 'pop_change':
             chartTitle = "Population Change Rate(%) vs Year";
@@ -515,9 +515,9 @@ let chartTitle, xLabel, yLabel;
             yLabel = "Population Change Rate(%)";
             break;
         case 'INC_Mean_change':
-            chartTitle = "Average Income Per Person Change Rate(%) vs Year";
+            chartTitle = "Average Gross Annual Household Income Change Rate(%) vs Year";
             xLabel = "Year";
-            yLabel = "Average Income Per Person Change Rate(%)";
+            yLabel = "Average Gross Annual Household Income Change Rate(%)";
             break;
     }
 
@@ -525,9 +525,9 @@ let chartTitle, xLabel, yLabel;
 let chartTitle1, xLabel1, yLabel1;
     switch(selectedAttribute) {
         case 'HP_mean_change':
-            chartTitle1 = "Average House Price(£) vs Year";
+            chartTitle1 = "Mean House Price(£) vs Year";
             xLabel1 = "Year";
-            yLabel1 = "Average House Price(£)";
+            yLabel1 = "Mean House Price(£)";
             break;
         case 'pop_change':
             chartTitle1 = "Population vs Year";
@@ -535,9 +535,9 @@ let chartTitle1, xLabel1, yLabel1;
             yLabel1 = "Population";
             break;
         case 'INC_Mean_change':
-            chartTitle1 = "Average Income Per Person vs Year";
+            chartTitle1 = "Average Gross Annual Household Income(£) vs Year";
             xLabel1 = "Year";
-            yLabel1 = "Average Income Per Person";
+            yLabel1 = "Average Gross Annual Household Income(£)";
             break;
     }
 
@@ -585,11 +585,11 @@ let chartTitle1, xLabel1, yLabel1;
 const incomeStops = [
         '#f7f7f7',
             0, '#eff3ff',
-            0.1, '#c6dbef',
-            0.2, '#9ecae1',
-            0.3, '#6baed6',
-            0.4, '#4292c6',
-            0.5, '#2171b5',
+            0.4, '#c6dbef',
+            0.45, '#9ecae1',
+            0.5, '#6baed6',
+            0.55, '#4292c6',
+            0.6, '#2171b5',
             0.75, '#084594'
 ];
 
@@ -617,12 +617,12 @@ const housePriceLegendValues = [
 
 const incomeLegendValues = [
 { value: "<0", color: '#eff3ff' },
-    { value: "0.00-0.10", color: '#c6dbef' },
-    { value: "0.10-0.20", color: '#9ecae1' },
-    { value: "0.20-0.30", color: '#6baed6' },
-    { value: "0.30-0.40", color: '#4292c6' },
-    { value: "0.40-0.50", color: '#2171b5' },
-    { value: ">0.50", color: '#084594' },
+    { value: "0.00-0.40", color: '#c6dbef' },
+    { value: "0.40-0.45", color: '#9ecae1' },
+    { value: "0.45-0.50", color: '#6baed6' },
+    { value: "0.50-0.55", color: '#4292c6' },
+    { value: "0.55-0.60", color: '#2171b5' },
+    { value: ">0.60", color: '#084594' },
 ];
 
 
