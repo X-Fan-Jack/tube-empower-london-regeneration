@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistic Analysis</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div id="myChart" style="width: 600px;height:400px;"></div>
+<input type="button" value="change" id="changeButton" onclick="changeStyle()">
+
+<script>
+    const geojsonURLNewhame = 'https://raw.githubusercontent.com/X-Fan-Jack/tube-empower-london-regeneration/jack/data/msoa_geojson_NH_data.geojson';
+    var chartStyle = 'Map';
+    var datafilter = 'INC_Mean_change_2002_2012';  // Change the data which you want to show
+    var mapOption, barOption;
+    var dataMax, dataMin;
+    var data_Newham;
+    const data_json = {
+        "type": "FeatureCollection",
+        "features": []
+    };
+    // Set the max/min value
+    dataMax = 0.755;
+    dataMin = 0.465;
+
+    var myChart = echarts.init(document.getElementById('myChart'));
+
+    myChart.showLoading();
+
+    // Load GeoJSON data using XMLHttpRequest
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', geojsonURLNewhame);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Parse GeoJSON data
+            data_Newham = JSON.parse(xhr.responseText);
+
+            for (const feature of data_Newham.features) {
+                data_json.features.push({
+                    "type": "Feature",
+                    "properties": Object.assign(
+                        feature.properties, {name: feature.properties.MSOA_NAME}
+                    ),
+                    "geometry": feature.geometry
+                });
+            }
+
+
+            // Add map component
+            echarts.registerMap('Newham', {geoJSON: data_json});
+
+            // { name: properties.MSOA_NAME , value: properties[filterField]}
+            var data = filterDataByField(datafilter, data_json);
+            data.sort(function (a, b) {
+                return a.value - b.value;
+            });
+
+
+            mapOption = {
+                title: {
+                    text: 'Change in Mean Income Growth Rate(2002-2012)',
+                    subtext: 'Data from data.london.gov.uk',
+                    sublink: 'https://data.london.gov.uk/dataset/household-income-estimates-small-areas',
+                    left: 'right'
+                },
+                geo: [{
+                    map: 'Newham',
+                }],
+                visualMap: {
+                    left: 'right',
+                    min: dataMin,
+                    max: dataMax,
+                    precision: 10,
+                    inRange: {
+                        // prettier-ignore
+                        color: ['#313695',
+                            '#4575b4',
+                            '#e0f3f8',
+                            '#ffffbf',
+                            '#fee090',
+                            '#d73027',
+                            '#a50026']
+                    },
+                    text: ['High', 'Low'],
+                    calculable: true
+                },
+                toolbox: {
+                    show: true,
+                    //orient: 'vertical',
+                    left: 'left',
+                    top: 'top',
+                    feature: {
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    showDelay: 0,
+                    transitionDuration: 0.2
+                },
+                series: [
+                    {
+                        name: 'MSOA_CODE ' + datafilter,
+                        type: 'map',
+                        map: 'Newham',
+                        animationDurationUpdate: 500,
+                        universalTransition: true,
+                        emphasis: {
+                            label: {
+                                show: true
+                            }
+                        },
+                        data: data,
+                    }
+                ]
+            };
+
+            barOption = {
+                xAxis: {
+                    type: 'value'
+                },
+                yAxis: {
+                    type: 'category',
+
+                    axisLabel: {
+                        rotate: 30,
+                        textStyle: {
+                            fontSize: 8, // 设置字体大小
+                        }
+                    },
+                    data: data.map(function (item) {
+                        return item.name;
+                    })
+                },
+                animationDurationUpdate: 500,
+                series: {
+                    type: 'bar',
+                    id: 'bar',
+                    data: data.map(function (item) {
+                        return item.value;
+                    }),
+                    universalTransition: true
+                }
+            };
+
+            // myChart.setOption(barOption);
+            loadChart();
+
+            myChart.hideLoading();
+        }
+    };
+
+
+    function filterDataByField(datafilter, data_js) {
+        var filterField = datafilter.trim();
+
+        var filteredFeatures = data_js.features.map(feature => {
+            const {properties} = feature;
+            return {name: properties.MSOA_NAME, value: properties[filterField]};
+        });
+
+        // 最后，返回筛选后的数据
+        return filteredFeatures;
+    }
+
+    function changeStyle() {
+        if (chartStyle === 'Map') {
+            // myChart.setOption(barOption);
+            chartStyle = 'Bar';
+        } else if (chartStyle === 'Bar') {
+            // myChart.setOption(mapOption);
+            chartStyle = 'Map';
+        }
+        loadChart();
+        // console.log("You have changed the style to " + chartStyle);
+    };
+
+    function loadChart() {
+        if (chartStyle === 'Map') {
+            myChart.setOption(mapOption, true);
+            // myChart.setOption(mapOption);
+        } else if (chartStyle === 'Bar') {
+            myChart.setOption(barOption, true);
+            // myChart.setOption(barOption);
+        }
+    }
+
+
+</script>
+</body>
+</html>

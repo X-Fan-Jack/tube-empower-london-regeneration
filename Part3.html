@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Swipe between maps</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css" type="text/css">
+<style>
+     body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    body * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+
+    .mapboxgl-ctrl-top-right {
+        top: 10px !important;
+        right: 10px !important;
+    }
+
+    .overlay {
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    line-height: 20px;
+    width: 300px;
+    padding: 16px 14px 16px 20px;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    overflow: hidden; /* Add this line to prevent the content from showing outside */
+   background-image: url(fd-images/bg.png);
+   background-color: rgba(255,255,255,0);
+   background-size: 100% 100%;
+   
+}
+.overlay p.credit {
+       margin: 0;
+       padding: 0;
+       color: white;
+    }
+
+.keychip {
+			padding-left: 4px;
+			border-left: 15px solid #333;
+			margin-top: 4px;
+			color: white;
+}
+
+.slider {
+    width: 100%;
+    margin: 10px 0;
+    /* Set the color of the slider track */
+    background-color: #ffffff;
+    
+}
+
+.buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    button {
+    background-color: rgba(255,255,255,0);
+    background-image: url(fd-images/button1.png);
+    background-size: 100% 100%;
+    border: none;
+    color: white;
+    padding: 5px 9px; /* Update the padding to change the button size */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    opacity: 0.8;
+}
+
+
+    button:hover {
+        opacity: 1;
+    }
+
+    .toggleFeatures {
+    position: absolute;
+    top: 100px;
+    left: 10px;
+    z-index: 2;
+}
+
+    #comparison-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+#features {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 30%;
+    font-family: sans-serif;
+    overflow-y: scroll;
+    background-color: #fafafa;
+    padding-bottom: 20px; /* Add this line */
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+}
+
+.hidden {
+    display: none !important;
+    opacity: 0;
+}
+
+
+table{
+	margin: 10px 0;
+}
+    section {
+        padding: 25px 50px;
+        line-height: 25px;
+        border-bottom: 1px solid #ddd;
+        opacity: 0.25;
+        font-size: 13px;
+        scroll-snap-align: start;
+    height: 100vh;
+    overflow-anchor: none;
+    }
+
+    section.active {
+        opacity: 1;
+    }
+
+    section:last-child {
+        border-bottom: none;
+        margin-bottom: 200px;
+    }
+
+    #panel_control.overlay {
+		    top: 9px;
+		    height: 24px;
+		    width: 80px;
+		    padding: 0;
+		    background:  rgba(255,255,255,0);
+			background-size: 100% 100%;
+			background-image: url(fd-images/hide.png);
+			opacity: 0.8;
+	    }
+    #panel_control.overlay:hover {
+		    opacity: 1;
+		    cursor: pointer;
+    }
+
+    
+    #new-overlay {
+    position: absolute;
+    top: 40px;
+    left: 10px;
+    line-height: 20px;
+    width: 260px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    overflow: hidden;
+}
+
+.compare-swiper-vertical{
+	background-color: rgba(255,255,255,0)!important;
+	background-image: url(fd-images/Switching.png)!important;
+	background-size: 100% 100%!important;
+}
+
+#year{
+	color: white;
+}
+
+.mapboxgl-popup {
+    opacity: 1 !important; 
+}
+
+.mapboxgl-popup-content {
+    padding: 0 !important;
+}
+
+.mapboxgl-ctrl-top-right {
+    right: 10px !important;
+}
+</style>
+
+</head>
+<body>
+
+<div id="panel_control" class='overlay open'></div>
+<div id="overlay" class="overlay">
+    <strong style="font-size: 20px;color: white;">The Change of Urban Form</strong></p>
+    <p class="credit">Building Footprint data: <a href="https://digimap.edina.ac.uk/roam/download/os"> Digimap</a>
+    <p class="credit">Building Height data: <a href=""> CASA03 week3 practical</a>
+    <div id="2007" class="keychip" style="border-color: #d9d9d9;">2007</div>
+    <div id="2009" class="keychip" style="border-color: #e0f3db;">2009</div>
+    <div id="2011" class="keychip" style="border-color: #ccebc5">2011</div>
+    <div id="2013" class="keychip" style="border-color: #a8ddb5;">2013</div>
+    <div id="2015" class="keychip" style="border-color: #7bccc4;">2015</div>
+    <div id="2017" class="keychip" style="border-color: #4eb3d3;">2017</div>
+    <div id="2019" class="keychip" style="border-color: #2b8cbe;">2019</div>
+    <div id="2021" class="keychip" style="border-color: #08589e;">2021</div>
+    <table>
+      <tr>
+        <td>
+          <input id='slider' type='range' min='0' max='8' step='1' value='0' list='tickmarks' />
+          <datalist id="tickmarks">
+            <option value="0" label="&nbsp;">
+            <option value="1" label="2007">
+            <option value="2">
+            <option value="3">
+            <option value="4">
+            <option value="5">
+            <option value="6">
+            <option value="7">
+            <option value="8" label="2021">
+          </datalist>
+        </td>
+        <td>
+          <label id='year'></label>
+        </td>
+      </tr>
+    </table>
+    
+    <div class="buttons">
+        <button id="startButton">Start</button>
+        <button id="stopButton">Stop</button>
+        <button id="location2">Stratford</button>
+        <button id="location1">Docklands</button>
+        <button id="toggleFeatures">Story</button>        
+</div>
+    </div>
+
+</div>
+<div id="new-overlay" class="overlay hidden">
+  <button id="back-to-land-use">Back to Urban Form</button>
+</div>
+<div id="comparison-container">
+    <div id="before" class="map"></div>
+    <div id="after" class="map"></div>
+</div>
+
+<div id="features">
+    <section id="Title" class="active">
+        <h2>The tour of outstanding projects during urban regeneration in East London</h2>
+        <p>
+        </p>
+        </section>
+        <section id="One Canada Square" class="active">
+        <h3>One Canada Square:</h3>
+        <p>
+
+          As a part of Canary Wharf Estate project, One Canada Square is a skyscraper located in Docklands. It was completed in 1991 as part of the initial phase of the Canary Wharf development. Its construction and subsequent success as a prominent landmark have attracted businesses, generated economic growth, and stimulated further development in the Canary Wharf area. It has become a major hub for business and commerce, housing financial institutions and multinational corporations.
+
+        </p>
+        </section>
+        <section id="Millennium quarter">
+        <h3>Millennium quarter:</h3>
+        <p>
+          The Millennium Quarter Project, conducted between 2007 and 2009, focused on landscape master plans and proposals for three mixed-use and residential developments in the Isle of Dogs area of London.    With its unique topography shaped by the meandering river Thames, the site holds a significant history intertwined with the industrial revolution and the development of the Docklands. The project aimed to create a contemporary public realm that honoured the site's heritage while addressing concerns like flooding and water recycling.
+        </p>
+        </section>
+        <section id="North Quay">
+        <h3>North Quay:</h3>
+        <p>
+
+          Outline Planning Permission and Listed Building Consent were secured in March 2022 for the redevelopment of the North Quay site. The project aims to bridge the gap between Canary Wharf and South Poplar, creating a vibrant destination. It includes the delivery of 8 hectares of publicly accessible open space, pedestrian routes, a central square, boardwalk, and infrastructure improvements. The project seeks to complement Canary Wharf while integrating additional high-rise development into the Isle of Dogs skyline.
+
+        </p>
+        </section>
+        <section id="Queen Elizabeth Olympic Park">
+        <h3>Queen Elizabeth Olympic Park:</h3>
+        <p>
+        Queen Elizabeth Olympic Park was built between 2008 and 2011 as a result of the successful bid for the 2012 Olympic Games. It has transformed a previously deprived area into a vibrant and accessible public space. The park serves as a catalyst for further development, attracting investments, businesses, and visitors. With its focus on sustainability and community engagement, Queen Elizabeth Olympic Park stands as a lasting legacy, fostering social and economic regeneration in East London.
+        </p>
+        </section>
+        <section id="Westfield Stratford City">
+        <h3>Westfield Stratford City:</h3>
+        <p>
+        Westfield Stratford City serves as a prominent example of urban regeneration in East London, closely intertwined with the revitalization initiatives stemming from the 2012 Olympic Games. Situated adjacent to the Queen Elizabeth Olympic Park, this expansive shopping centre has successfully revitalised a previously underdeveloped and disadvantaged area. With its diverse range of retail, dining, and entertainment options, the centre attracts over 51 million annual visitors, providing a significant boost to the local economy and creating numerous employment opportunities. Additionally, it brings around a million shoppers each week, fostering jobs, tourism, and investment within the local community
+        </p>
+        </section>
+        <section id="UCL East Campus">
+        <h3>UCL East Campus:</h3>
+        <p>
+        As a case of university-led regeneration, UCL East campus is located in the Olympic Park and the East Bank cultural and educational district. Construction for Phase 1 started in 2019 and is projected to be finished by the beginning of the 2022 academic year. This phase will cover about 50,000 sqm of development, including student accommodation for approximately 550 beds.
+        </p>
+        
+        </section>
+</div>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGlubHl1IiwiYSI6ImNsZWU2aDY3ZDBlMjYzd212eTVsNDcyeXUifQ.SeRfet4RVHQGf7DAiD1gYw';
+    
+    const beforeMap = new mapboxgl.Map({
+    container: 'before',
+    style: 'mapbox://styles/pinlyu/clhf68b71019x01p645c2eb4y',
+    center: [-0.1478, 51.5074],
+    zoom: 11,
+    pitch: 0
+}).on('load', function() {
+  
+
+    const values = [
+  "dog_2021", "dog_2019", "dog_2017", "dog_2015",
+  "dog_2013", "dog_2011", "dog_2009", "dog_2007",
+  "stratford_2021", "stratford_2019", "stratford_2017", "stratford_2015",
+  "stratford_2013", "stratford_2011", "stratford_2009", "stratford_2007"
+];
+
+const colorMap = {
+  "dog_2021": "#08589e",
+  "dog_2019": "#2b8cbe",
+  "dog_2017": "#4eb3d3",
+  "dog_2015": "#7bccc4",
+  "dog_2013": "#a8ddb5",
+  "dog_2011": "#ccebc5",
+  "dog_2009": "#e0f3db",
+  "dog_2007": "#d9d9d9",
+  "stratford_2021": "#08589e",
+  "stratford_2019": "#2b8cbe",
+  "stratford_2017": "#4eb3d3",
+  "stratford_2015": "#7bccc4",
+  "stratford_2013": "#a8ddb5",
+  "stratford_2011": "#ccebc5",
+  "stratford_2009": "#e0f3db",
+  "stratford_2007": "#d9d9d9",
+};
+
+
+values.forEach((value) => {
+  beforeMap.addLayer({
+    'id': `footprint-${value}`, // Use a unique ID for each layer based on the value
+    'type': 'fill',
+    'source': {
+      'type': 'vector',
+      'url': 'mapbox://pinlyu.2hwi6185'
+    },
+    'source-layer': 'footprint',
+    'layout': {
+      'visibility': 'none' // Set the initial visibility of all layers to 'none'
+    },
+    'paint': {
+      'fill-color': colorMap[value], // Adjust the color as needed
+      'fill-opacity': 1
+    },
+    'filter': ['==', 'id', value] // Use the value from the list for the filter
+  });
+});
+
+
+// Update the showValue function
+function showValue(currentValue) {
+  if (currentValue === null) {
+    years.forEach((year) => {
+      const layerIdDog = `footprint-dog_${year}`;
+      const layerIdStratford = `footprint-stratford_${year}`;
+
+      beforeMap.setLayoutProperty(layerIdDog, 'visibility', 'none');
+      beforeMap.setLayoutProperty(layerIdStratford, 'visibility', 'none');
+    });
+  } else {
+    const currentYearIndex = years.indexOf(currentValue);
+
+    years.forEach((year, index) => {
+      const layerIdDog = `footprint-dog_${year}`;
+      const layerIdStratford = `footprint-stratford_${year}`;
+
+      if (index <= currentYearIndex) {
+        beforeMap.setLayoutProperty(layerIdDog, 'visibility', 'visible');
+        beforeMap.setLayoutProperty(layerIdStratford, 'visibility', 'visible');
+      } else {
+        beforeMap.setLayoutProperty(layerIdDog, 'visibility', 'none');
+        beforeMap.setLayoutProperty(layerIdStratford, 'visibility', 'none');
+      }
+    });
+  }
+}
+
+
+
+// Add the input event listener for the slider
+const slider = document.getElementById('slider');
+slider.addEventListener('input', () => {
+  const currentSliderValue = parseInt(slider.value);
+
+  if (currentSliderValue === 0) {
+    document.getElementById('year').textContent = '';
+    showValue(null);
+  } else {
+    const currentYear = years[currentSliderValue - 1];
+    showValue(currentYear);
+    document.getElementById('year').textContent = currentYear;
+  }
+});
+
+// Add the toggleValue function
+function toggleValue(value) {
+  const layerId = `footprint-${value}`;
+  const currentVisibility = beforeMap.getLayoutProperty(layerId, 'visibility');
+
+  if (currentVisibility === 'visible') {
+    beforeMap.setLayoutProperty(layerId, 'visibility', 'none');
+  } else {
+    beforeMap.setLayoutProperty(layerId, 'visibility', 'visible');
+  }
+}
+
+
+
+
+const years = [2007, 2009, 2011, 2013, 2015, 2017, 2019, 2021];
+
+years.forEach((year) => {
+  // Get the button with the corresponding year ID
+  const button = document.getElementById(year.toString());
+
+  // Add the click event listener to the button
+  button.addEventListener("click", () => {
+    toggleValue(`dog_${year}`);
+    toggleValue(`stratford_${year}`);
+  });
+});
+
+
+const location1Button = document.getElementById("location1");
+location1Button.addEventListener("click", () => {
+  beforeMap.flyTo({ center: [-0.02299806326513476,51.503], zoom: 13.3 });
+});
+
+const location2Button = document.getElementById("location2");
+location2Button.addEventListener("click", () => {
+  beforeMap.flyTo({ center: [-0.01426062887264834,51.545765676754], zoom: 13.3 });
+});
+
+
+
+// Add variables for the animation
+let animation;
+let animationRunning = false;
+
+// Add the animateSlider function
+function animateSlider() {
+  const slider = document.getElementById("slider");
+  const maxSliderValue = parseInt(slider.max);
+
+  if (parseInt(slider.value) < maxSliderValue) {
+    slider.value = parseInt(slider.value) + 1;
+    slider.dispatchEvent(new Event("input"));
+    animation = setTimeout(animateSlider, 1000); // Adjust the duration between updates (1000 ms = 1 second)
+  } else {
+    clearTimeout(animation);
+    animationRunning = false;
+  }
+}
+
+// Add the event listener for the Start button
+const startButton = document.getElementById("startButton");
+startButton.addEventListener("click", () => {
+  if (!animationRunning) {
+    animationRunning = true;
+    animateSlider();
+  }
+});
+
+// Add the event listener for the Stop button
+const stopButton = document.getElementById("stopButton");
+stopButton.addEventListener("click", () => {
+  clearTimeout(animation);
+  animationRunning = false;
+});
+
+});
+
+
+
+const afterMap = new mapboxgl.Map({
+    container: 'after',
+    style: 'mapbox://styles/pinlyu/clhkdkfpc01n101pg2xgncldm',
+    center: [-0.1478, 51.5074],
+    zoom: 14,
+    pitch: 0
+});
+
+    const beforeNavControl = new mapboxgl.NavigationControl({ showCompass: true });
+    beforeMap.addControl(beforeNavControl, 'top-right');
+
+    const afterNavControl = new mapboxgl.NavigationControl({ showCompass: true });
+    afterMap.addControl(afterNavControl, 'top-right');
+
+    const container = '#comparison-container';
+
+    const map = new mapboxgl.Compare(beforeMap, afterMap, container, {});
+
+    const mapWidth = beforeMap.getContainer().offsetWidth;
+
+// Move the swiper to the rightmost of the screen initially
+map.setSlider(mapWidth);
+
+
+
+    const chapters = {
+'Title': {
+bearing: 0,
+center: [-0.02299806326513476,51.503],
+zoom: 13.3,
+pitch: 0
+},
+'One Canada Square': {
+duration: 6000,
+center: [-0.0197675, 51.5049375],
+bearing: 0,
+zoom: 15,
+pitch: 70,
+image: 'fd-images/One_Canada_Square.jpeg' ,
+offset: [0.003, 0.002]
+},
+'Millennium quarter': {
+bearing: 90,
+center: [-0.0263, 51.50084],
+zoom: 16,
+speed: 0.6,
+pitch: 50,
+image: 'fd-images/Millennium_quarter.jpeg',
+offset: [-0.004, -0.001]
+
+},
+'North Quay': {
+bearing: 90,
+center: [-0.0171, 51.50705],
+zoom: 16,
+pitch: 30,
+image: 'fd-images/North_Quay.png',
+offset: [0.001, -0.001]
+},
+'Queen Elizabeth Olympic Park': {
+bearing: 30,
+center: [-0.016592701546613853,51.53862055016904],
+zoom: 16,
+pitch: 70,
+image: 'fd-images/Queen_Elizabeth_Olympic_Park.jpeg',
+offset: [0.002, 0.001]
+},
+'Westfield Stratford City': {
+bearing: 270,
+center: [-0.00339, 51.54405],
+zoom: 16,
+pitch: 60,
+image: 'fd-images/Westfield_Stratford_City.jpeg',
+offset: [0.0005, 0.0008]
+},
+'UCL East Campus': {
+bearing: 0,
+center: [-0.0092191, 51.537912],
+zoom: 16,
+speed: 0.6,
+pitch: 70,
+image: 'fd-images/UCL_East_Campus.jpeg',
+offset: [0.001, -0.0008]
+}
+};
+ 
+let activeMarker = null; 
+let activeChapterName = 'Title';
+function setActiveChapter(chapterName) {
+    if (chapterName === activeChapterName) return;
+
+    const chapter = chapters[chapterName];
+
+    const popup = new mapboxgl.Popup({ offset: 25, maxWidth: '400px',})
+        .setHTML(`<img src="${chapter.image}" alt="Image for ${chapterName}" style="width: 100%; height: 100%; display: block;" />`);
+
+
+    if (activeMarker) {
+        activeMarker.remove();
+    }
+
+    activeMarker = new mapboxgl.Marker()
+        .setLngLat(chapter.center)
+        .setPopup(popup)
+        .addTo(afterMap); 
+
+
+    popup.addTo(afterMap);
+
+    const adjustedCenter = [chapter.center[0] + chapter.offset[0], chapter.center[1] + chapter.offset[1]];
+
+    beforeMap.flyTo({
+        center: adjustedCenter,
+        zoom: chapter.zoom,
+        pitch: chapter.pitch || 0,
+        bearing: chapter.bearing || 0
+    });
+
+    afterMap.flyTo({
+        center: adjustedCenter,
+        zoom: chapter.zoom,
+        pitch: chapter.pitch || 0,
+        bearing: chapter.bearing || 0
+    });
+
+    document.getElementById(chapterName).classList.add('active');
+    document.getElementById(activeChapterName).classList.remove('active');
+
+    activeChapterName = chapterName;
+}
+
+
+
+ 
+function isElementOnScreen(id) {
+const element = document.getElementById(id);
+const bounds = element.getBoundingClientRect();
+return bounds.top < window.innerHeight && bounds.bottom > 0;
+}
+
+    // On every scroll event, check which element is on screen
+    document.getElementById("features").onscroll = () => {
+
+        for (const chapterName in chapters) {
+            if (isElementOnScreen(chapterName)) {
+                setActiveChapter(chapterName);
+                break;
+            }
+        }
+    };
+
+    function toggleFeatures() {
+    const features = document.getElementById("features");
+    features.style.display = "none";
+    const overlay = document.getElementById("overlay");
+    const newOverlay = document.getElementById("new-overlay");
+
+    if (features.style.display === "none") {
+        features.style.display = "block";
+        overlay.classList.add('hidden'); // hide the old overlay
+        newOverlay.classList.remove('hidden'); // show the new overlay
+        document.body.style.overflow = 'scroll'; // Show scrollbar of body
+    } else {
+        features.style.display = "none";
+        overlay.classList.remove('hidden'); // show the old overlay
+        newOverlay.classList.add('hidden'); // hide the new overlay
+        document.body.style.overflow = 'visible'; // Hide scrollbar of body
+    }
+}
+
+
+// Get the button by its ID
+const button1 = document.getElementById('toggleFeatures');
+
+// Add click event listener
+button1.addEventListener('click', function() {
+    // Move the swiper to the leftmost of the screen
+    map.setSlider(0);
+
+    // Also toggle features
+    toggleFeatures();
+});
+
+
+const overlay = document.getElementById('overlay');
+const panelControl = document.getElementById('panel_control');
+
+panelControl.addEventListener('click', () => {
+  overlay.classList.toggle('hidden');
+});
+
+document.getElementById("back-to-land-use").addEventListener("click", function() {
+    document.getElementById('new-overlay').classList.add('hidden');
+    document.getElementById('overlay').classList.remove('hidden');
+    document.getElementById('features').style.display = 'none'; // Hide features
+    document.body.style.overflow = 'visible'; // Make body scrollbar normal
+
+
+});
+
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+</html>

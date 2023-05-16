@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Change Rate(%)</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<style>
+    body { margin:0; padding:0; }
+    #map { position:absolute; top:0; bottom:0; left: 0; width:100%; }
+    
+    .map-overlay {
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        position: absolute;
+        width: 380px;
+        min-width: 380px;
+        top: 0;
+        left: 0;
+        padding: 10px;
+    }
+    
+    .map-overlay .map-overlay-inner {
+        background-color: #fff;
+        box-shadow:0 1px 2px rgba(0, 0, 0, 0.20);
+        border-radius: 3px;
+        padding: 10px 10px 10px 20px;
+        margin-bottom: 10px;
+        background-image: url(fd-images/bg.png);
+        background-color: rgba(255,255,255,0);
+        background-size: 100% 100%;
+    }
+    
+    .map-overlay table {
+        border: none;
+        width: 100%;
+    }
+    
+    .map-overlay h2 {
+        line-height: 24px;
+        display: block;
+        margin: 0 0 10px;
+        color: white;
+    }
+    
+    .map-overlay label {
+        font: 18px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        display: block;
+        margin: 0 0 0 10px;
+        padding: 0;
+    }
+    
+    .map-overlay .legend .bar {
+        height: 10px;
+        width: 100%;
+        background: linear-gradient(to right, #FCA107, #7F3121);
+    }
+    
+    .map-overlay input {
+        background-color: transparent;
+        display: inline-block;
+        width: 100%;
+        min-width: 220px;
+        position: relative;
+        margin: 6px 0 0 0;
+        cursor: ew-resize;
+    }
+    
+    .map-overlay p.credit {
+       margin: 0;
+       padding: 0;
+       color: white;
+    }
+    
+
+    .map-overlay p.controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 1;
+    }
+    select {
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        background-color: rgba(255,255,255,0);
+        border: 1px solid #fff;
+        padding:4px;
+        color: white;
+        border-radius: 4px;
+    }
+    
+    .map-overlay p.buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .map-overlay button {
+        background-color: rgba(255,255,255,0);
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin: 10px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+        background-image: url(fd-images/hide.png);
+        background-size: 100% 100%;
+        padding:5px 30px 5px 40px;
+    }
+    
+    .map-overlay button:hover {
+        background-color: #e77715;
+    }
+    
+    .map-overlay2 {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        margin-right: 10px;
+        border-radius: 5px;
+       
+    }
+    .map-overlay2 h3{
+    	color: white;
+    }
+    .map-overlay2 span{
+    	color: white;
+    }
+    
+    #legend {
+    background: rgb(255, 255, 255);
+    opacity: 1;
+    padding: 10px 20px 20px;
+    margin-bottom: 40px;
+    line-height: 20px;
+    min-height: 140px;
+    width: 140px;
+ 	 background-image: url(fd-images/bglong.png);
+        background-color: rgba(255,255,255,0);
+        background-size: 100% 100%;
+
+}
+#legend h3{
+	margin:10px 0;
+}
+.legend-key {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+}
+
+.mapboxgl-popup {
+    width: 600px !important;
+    height: 400px !important;
+}
+#chart {
+    padding: 20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.mapboxgl-ctrl-top-right {
+    right: 60px !important;
+}
+
+    </style>
+<body>
+    <div id='map'></div>
+    <div class='map-overlay top'>
+        <div class='map-overlay-inner'>
+            <h2>Total change rate(%) from 2002 to 2020</h2>
+            <p class="credit">Mean House Price(£) data: <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/hpssadataset2medianhousepricebymsoaquarterlyrollingyear"> ONS</a>
+            <p class="credit">Population data: <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/middlesuperoutputareamidyearpopulationestimates">ONS</a>
+            <p class="credit">Average Gross Annual Household Income(£) data: <a href="https://data.london.gov.uk/dataset/household-income-estimates-small-areas"> London Datastore</a>
+             <div class="buttons">
+                <button id="navigateButton">back to main map</button> 
+            </div>
+            <div class="controls">
+                <select id="layer-select" onchange="showLayer(this.value)" value="HP_mean_change">
+                    <option value="HP_mean_change" style="color: black;">House Price</option>
+                    <option value="pop_change" style="color: black;">Population</option>
+                    <option value="INC_Mean_change" style="color: black;">Average Gross Annual Household Income(£)</option>
+                </select>
+                
+            </div>
+    </div>
+    </div>
+    <div class='map-overlay2' id='legend'></div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoicGlubHl1IiwiYSI6ImNsZWU2aDY3ZDBlMjYzd212eTVsNDcyeXUifQ.SeRfet4RVHQGf7DAiD1gYw';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/pinlyu/clhcqbrmb014101pr7as78jyt',
+            center: [ -0.0278, 51.52],
+            zoom: 12,
+            pitch: 0
+        });
+
+
+        map.addControl(new mapboxgl.NavigationControl());
+
+        map.on('load', function () {
+        
+            map.addSource('circles', {
+    type: 'geojson',
+    data: 'https://raw.githubusercontent.com/NoodlesLYU/digital_cw_demo/main/stations_jubilee3.geojson'  // path to your GeoJSON file
+});
+
+map.addLayer({
+    id: 'circles-layer',
+    type: 'circle',
+    source: 'circles',
+    'paint': {
+                'circle-radius': 12,
+                'circle-color': '#fdae6b'
+            },
+        'circle-opacity': 0.5
+    }
+);
+
+map.addLayer({
+        'id': 'circle-labels',
+        'type': 'symbol',
+        'source': 'circles',
+        'layout': {
+            'text-field': ['get', 'Station'],
+            'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+            'text-size': 12,
+            'text-offset': [0, 2],
+            'text-anchor': 'top'
+        },
+        'paint': {
+                'text-color': '#f7f7f7'
+            }
+    });
+
+        function addLayerWithAttribute(attribute, stops) {
+            map.addLayer({
+                'id': 'layer_2002_2020_' + attribute,
+                'type': 'fill',
+                'source': {
+                    'type': 'vector',
+                    'url': 'mapbox://pinlyu.aackmt82'
+                },
+                'source-layer': 'newdata_area',
+                'layout': {},
+                'paint': {
+                    'fill-color': [
+                        'step',
+                        ['get', attribute + '_2002_2020' ],
+                        ...stops
+                    ],
+                   
+                    'fill-opacity': 0.5
+             
+                }
+            }); 
+        }
+
+        
+
+        map.addLayer({        //Add the fill layer. It is not visible (opacity 0) and is used only as the basis of the hover selection
+            id: 'LocalAuthorities',
+            type: 'fill',
+            source: {
+                type: 'vector',
+                url: 'mapbox://pinlyu.aackmt82' // Mapbox tileset Map ID
+            },
+            'source-layer': 'newdata_area', // name of tilesets
+            'layout': {
+                'visibility': 'visible'
+            },
+            paint: {
+                'fill-color': '#fff',
+                'fill-opacity': 0
+            }
+        });
+
+        map.addLayer({
+            id: 'lahighlight',
+            type: 'line',
+            source: {
+                type: 'vector',
+                url: 'mapbox://pinlyu.aackmt82' // Your Mapbox tileset Map ID
+            },
+            'source-layer': 'newdata_area', // name of tilesets
+            paint: {
+                'line-color': '#fd8d3c',
+                'line-width': 3
+            },
+            filter: ['==', 'Code', '']
+        });
+
+        function createLineChart(data, elementId, color, title, xLabel, yLabel) {
+    var margin = {top: 40, right: 80, bottom: 80, left: 100},
+        width = 500,
+        height = 300;
+
+    var svg = d3.select(elementId)
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleLinear()
+        .range([0, width])
+        .domain(d3.extent(data, function(d) { return d.Year; }));
+
+    var y = d3.scaleLinear()
+        .range([height, 0])
+        .domain([d3.min(data, function(d) { return d.Density; }), d3.max(data, function(d) { return d.Density; })]);
+
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    // Add X axis label
+    svg.append("text")
+        .attr("transform", "translate(" + (width/2) + " ," + (height + margin.bottom/2) + ")")
+        .style("text-anchor", "middle")
+        .text(xLabel);
+
+    // Add Y axis label
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left/2)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text(yLabel);  
+
+    // Add chart title
+    svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "20px") 
+        .text(title);
+
+    // Define the line
+    var line = d3.line()
+        .x(function(d) { return x(d.Year); })
+        .y(function(d) { return y(d.Density); });
+
+    // Add the line path
+    svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .attr("d", line)
+        .attr("fill", "none")
+        .attr("stroke", color);
+}
+
+function createBarChart(data, elementId, color, title, xLabel, yLabel) {
+
+var margin = {top: 80, right: 80, bottom: 80, left: 120},
+    width = 500,
+    height = 300;
+
+var svg = d3.select(elementId)
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scaleBand()
+    .rangeRound([0, width])
+    .padding(0.1)
+    .domain(data.map(function(d) { return d.Year; }));
+
+var y = d3.scaleLinear()
+    .rangeRound([height, 0])
+    .domain([0, d3.max(data, function(d) { return d.Density; })]);
+
+    svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+svg.append("g")
+    .call(d3.axisLeft(y));
+
+// X Axis label
+svg.append("text")
+    .attr("transform", "translate(" + (width/2) + " ," + (height + margin.bottom/2) + ")")
+    .style("text-anchor", "middle")
+    .text(xLabel);
+
+// Y Axis label
+svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left/2)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text(yLabel);  
+
+svg.append("text")
+    .attr("x", (width / 2))             
+    .attr("y", 0 - (margin.top / 2))
+    .attr("text-anchor", "middle")  
+    .style("font-size", "20px") 
+    .text(title);
+
+
+svg.selectAll(".bar")
+    .data(data)
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d) { return x(d.Year); })
+    .attr("y", function(d) { return y(d.Density); })
+    .attr("width", x.bandwidth())
+    .attr("height", function(d) { return height - y(d.Density); })
+    .attr("fill", color);
+}
+
+var popup_name = new mapboxgl.Popup({
+    maxWidth: '100px',
+    closeButton: false,
+    closeOnClick: false
+});
+
+map.on('mousemove', function(e) {
+    var la = map.queryRenderedFeatures(e.point, {
+        layers: ['LocalAuthorities']
+    });
+
+    if (la.length == 1) {
+        var laName = la[0].properties.Code;
+        var areaName = la[0].properties.MSOA11NM;
+
+        map.setFilter('lahighlight', ['==', 'Code', laName]);
+
+        // Set the popup content and location
+        popup_name.setLngLat(e.lngLat)
+            .setHTML(areaName)
+            .addTo(map);
+    } else {
+        map.setFilter('lahighlight', ['==','Code','null']);
+        popup.remove();
+    }
+});
+
+map.on('click', 'LocalAuthorities', function (e) {
+    var coordinates = e.features[0].geometry.coordinates[0];
+    var data = [];
+    for (var year = 2003; year <= 2020; year++) {
+        let value;
+        switch(selectedAttribute) {
+            case 'pop_change':
+                value = e.features[0].properties["pop_change_" + year];
+                break;
+            case 'HP_mean_change':
+                value = e.features[0].properties["HP_mean_change_" + year];
+                break;
+            case 'INC_Mean_change':
+                value = e.features[0].properties["INC_Mean_change_" + year];
+                break;
+            default:
+                value = 0;
+        }
+        data.push({
+            Year: year,
+            Density: value,
+        });
+    }
+    var data1 = [];
+    for (var year = 2002; year <= 2020; year++) {
+        let value;
+        switch(selectedAttribute) {
+            case 'pop_change':
+                value = e.features[0].properties["POP_" + year];
+                break;
+            case 'HP_mean_change':
+                value = e.features[0].properties["HP_mean_" + year];
+                break;
+            case 'INC_Mean_change':
+                value = e.features[0].properties["INC_Mean_" + year];
+                break;
+            default:
+                value = 0;
+        }
+        data1.push({
+            Year: year,
+            Density: value,
+        });
+    }
+
+    var popup = new mapboxgl.Popup({maxWidth: '1200px'})
+    .setLngLat(e.lngLat)
+    .setHTML("<div id='chart' class='line-chart-popup'></div><button id='changeContentButton' style='position: absolute; top: 30px; right: 30px;'>Change to bar chart</button>")
+    .addTo(map);
+    
+    popup._content.style.width = '700px';
+    popup._content.style.height = '450px';
+    popup._content.style.position = 'relative'; // make sure the button is positioned relative to the popup
+
+    var originalContent = "<div id='chart' class='line-chart-popup'></div>";
+    var newContent = "<div id='barchart' class='bar-chart-popup'></div>";
+
+    // flag to track if the original content is displayed
+    var originalContentDisplayed = true;
+
+    // add the event listener to the button
+document.getElementById('changeContentButton').addEventListener('click', function() {
+    // check the flag and toggle the content and the flag
+    if (originalContentDisplayed) {
+        popup.setHTML(newContent + "<button id='changeContentButton' style='position: absolute; top: 30px; right: 30px;'>Change to line chart</button>");
+        originalContentDisplayed = false;
+        // recreate the bar chart in the new container
+        createBarChart(data1, '#barchart', 'steelblue', chartTitle1, xLabel1, yLabel1);
+    } else {
+        popup.setHTML(originalContent + "<button id='changeContentButton' style='position: absolute; top: 30px; right: 30px;'>Change to bar chart</button>");
+        originalContentDisplayed = true;
+        // recreate the line chart in the new container
+        createLineChart(data, '#chart', 'steelblue', chartTitle, xLabel, yLabel);
+    }
+    
+    // add the event listener to the new button
+    document.getElementById('changeContentButton').addEventListener('click', arguments.callee);
+});
+
+
+// Define chart title and labels based on selected option
+let chartTitle, xLabel, yLabel;
+    switch(selectedAttribute) {
+        case 'HP_mean_change':
+            chartTitle = "Mean House Price Change Rate(%) vs Year";
+            xLabel = "Year";
+            yLabel = "Mean House Price Change Rate(%)";
+            break;
+        case 'pop_change':
+            chartTitle = "Population Change Rate(%) vs Year";
+            xLabel = "Year";
+            yLabel = "Population Change Rate(%)";
+            break;
+        case 'INC_Mean_change':
+            chartTitle = "Average Gross Annual Household Income Change Rate(%) vs Year";
+            xLabel = "Year";
+            yLabel = "Average Gross Annual Household Income Change Rate(%)";
+            break;
+    }
+
+    // Define chart title and labels based on selected option
+let chartTitle1, xLabel1, yLabel1;
+    switch(selectedAttribute) {
+        case 'HP_mean_change':
+            chartTitle1 = "Mean House Price(£) vs Year";
+            xLabel1 = "Year";
+            yLabel1 = "Mean House Price(£)";
+            break;
+        case 'pop_change':
+            chartTitle1 = "Population vs Year";
+            xLabel1 = "Year";
+            yLabel1 = "Population";
+            break;
+        case 'INC_Mean_change':
+            chartTitle1 = "Average Gross Annual Household Income(£) vs Year";
+            xLabel1 = "Year";
+            yLabel1 = "Average Gross Annual Household Income(£)";
+            break;
+    }
+
+    createLineChart(data, '#chart', 'steelblue', chartTitle, xLabel, yLabel);
+
+
+});
+
+    // When the cursor enters a feature in the 'maine' layer, prepare for a
+    // popup to be shown.
+    map.on('mouseenter', 'LocalAuthorities', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // When the cursor leaves a feature in the 'maine' layer, remove the popup.
+    map.on('mouseleave', 'LocalAuthorities', function () {
+        map.getCanvas().style.cursor = '';
+    });  
+
+        const popDensityStops = [
+            '#f7f7f7',
+            -0.06, '#eff3ff',
+            0, '#c6dbef',
+            0.1, '#9ecae1',
+            0.5, '#6baed6',
+            1, '#4292c6',
+            2, '#2171b5',
+            3.28, '#084594'
+        ];
+
+
+        const housePriceStops = [
+        '#f7f7f7',
+            0, '#eff3ff',
+            0.8, '#c6dbef',
+            1.5, '#9ecae1',
+            2, '#6baed6',
+            2.5, '#4292c6',
+            3, '#2171b5',
+            3.6, '#084594'
+
+];
+
+
+const incomeStops = [
+        '#f7f7f7',
+            0, '#eff3ff',
+            0.4, '#c6dbef',
+            0.45, '#9ecae1',
+            0.5, '#6baed6',
+            0.55, '#4292c6',
+            0.6, '#2171b5',
+            0.75, '#084594'
+];
+
+
+
+        const popDensityLegendValues = [
+    { value: "<-0.06", color: '#eff3ff' },
+    { value: "-0.06-0.00", color: '#c6dbef' },
+    { value: "0.00-0.10", color: '#9ecae1' },
+    { value: "0.10-0.50", color: '#6baed6' },
+    { value: "0.50-1.00", color: '#4292c6' },
+    { value: "1.00-2.00", color: '#2171b5' },
+    { value: ">2.00", color: '#084594' },
+];
+
+const housePriceLegendValues = [
+{ value: "<0", color: '#eff3ff' },
+    { value: "0.00-0.80", color: '#c6dbef' },
+    { value: "0.80-1.50", color: '#9ecae1' },
+    { value: "1.50-2.00", color: '#6baed6' },
+    { value: "2.00-2.50", color: '#4292c6' },
+    { value: "2.50-3.00", color: '#2171b5' },
+    { value: ">3.00", color: '#084594' },
+];
+
+const incomeLegendValues = [
+{ value: "<0", color: '#eff3ff' },
+    { value: "0.00-0.40", color: '#c6dbef' },
+    { value: "0.40-0.45", color: '#9ecae1' },
+    { value: "0.45-0.50", color: '#6baed6' },
+    { value: "0.50-0.55", color: '#4292c6' },
+    { value: "0.55-0.60", color: '#2171b5' },
+    { value: ">0.60", color: '#084594' },
+];
+
+
+function updateLegend(attribute) {
+    let legend = document.getElementById('legend');
+    legend.innerHTML = '';
+
+    if (attribute === 'pop_change') {
+        legend.innerHTML = '<h3>Population Change Rate(%)</h3>';
+        popDensityLegendValues.forEach((item) => {
+            let key = document.createElement('span');
+            key.className = 'legend-key';
+            key.style.backgroundColor = item.color;
+
+            let label = document.createElement('span');
+            label.innerHTML = item.value;
+
+            let legendItem = document.createElement('div');
+            legendItem.appendChild(key);
+            legendItem.appendChild(label);
+
+            legend.appendChild(legendItem);
+        });
+    }
+    else if (attribute === 'HP_mean_change') {
+    legend.innerHTML = '<h3>Mean House Price Change Rate(%)</h3>';
+    housePriceLegendValues.forEach((item) => {
+        let key = document.createElement('span');
+            key.className = 'legend-key';
+            key.style.backgroundColor = item.color;
+
+            let label = document.createElement('span');
+            label.innerHTML = item.value;
+
+            let legendItem = document.createElement('div');
+            legendItem.appendChild(key);
+            legendItem.appendChild(label);
+
+            legend.appendChild(legendItem);
+    });
+} 
+else if (attribute === 'INC_Mean_change') {
+    legend.innerHTML = '<h3>Average Gross Annual Household Income Change Rate(%)</h3>';
+    incomeLegendValues.forEach((item) => {
+        let key = document.createElement('span');
+            key.className = 'legend-key';
+            key.style.backgroundColor = item.color;
+
+            let label = document.createElement('span');
+            label.innerHTML = item.value;
+
+            let legendItem = document.createElement('div');
+            legendItem.appendChild(key);
+            legendItem.appendChild(label);
+
+            legend.appendChild(legendItem);
+    });
+}
+
+}
+
+addLayerWithAttribute('pop_change', popDensityStops);
+addLayerWithAttribute('HP_mean_change', housePriceStops);
+addLayerWithAttribute('INC_Mean_change', incomeStops);
+
+function showLayer(attribute) {
+    const attributes = ['pop_change', 'HP_mean_change', 'INC_Mean_change'];
+
+    attributes.forEach(attr => {
+        if(attr == attribute) {
+            map.setLayoutProperty('layer_2002_2020_' + attr, 'visibility', 'visible');
+        } else {
+            map.setLayoutProperty('layer_2002_2020_' + attr, 'visibility', 'none');
+        }
+    });
+
+    updateLegend(attribute);
+};
+
+
+
+let selectedAttribute = 'HP_mean_change'; // Initialize with the default attribute
+
+document.getElementById('layer-select').addEventListener('change', (event) => {
+    selectedAttribute = event.target.value;
+    showLayer(selectedAttribute);
+    
+    
+});
+
+document.getElementById("navigateButton").addEventListener("click", function() {
+window.location.href = "Part2_2.html";
+});
+        showLayer('HP_mean_change');
+ });      
+
+    </script>
+</body>
+</html>

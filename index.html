@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .map-overlay {
+            font: 12px/20px;
+            position: absolute;
+            width: 360px;
+            top: 260px;
+            left: 0;
+            padding: 10px;
+        }
+
+        .map-overlay .map-overlay-inner {
+            background-color: rgba(9, 9, 9, 0.4);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .map-overlay table {
+            border: none;
+            width: 100%;
+        }
+
+        .map-overlay h2 {
+            line-height: 24px;
+            display: block;
+            margin: 0 0 10px;
+        }
+
+        .map-overlay label {
+            font: 18px/20px;
+            display: block;
+            margin: 0 0 0 10px;
+            padding: 0;
+        }
+
+        .map-overlay .legend .bar {
+            height: 10px;
+            width: 100%;
+            background: linear-gradient(to right, #FCA107, #7F3121);
+        }
+
+        .map-overlay input {
+            background-color: transparent;
+            display: inline-block;
+            width: 100%;
+            min-width: 220px;
+            position: relative;
+            margin: 6px 0 0 0;
+            cursor: ew-resize;
+        }
+
+        .map-overlay p.credit {
+            margin: 0;
+            padding: 0;
+        }
+
+        .map-overlay p.controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1;
+        }
+
+        select {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .map-overlay p.buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .map-overlay button {
+            background-color: #FFC93C;
+            border: none;
+            color: black;
+            padding: 5px 12px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .map-overlay button:hover {
+            background-color: #FFA559;
+        }
+
+        .map-overlay1 {
+            background: rgba(9, 9, 9, 0.4);
+            position: absolute;
+            width: 340px;
+            height: 230px;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+        }
+
+        .map-overlay2 {
+            position: absolute;
+            bottom: 40px;
+            left: 25px;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        #legend {
+            background: rgba(9, 9, 9, 0.4);
+            color: white;
+            left: 15px;
+            opacity: 1;
+            padding: 15px;
+            padding-top: 40px;
+            margin-bottom: 40px;
+            line-height: 20px;
+            min-height: 140px;
+            min-width: 140px; /* Set a minimum width */
+            max-width: 100%; /* Allow the legend to expand to the full width based on the content */
+            white-space: nowrap; /* Prevent the text from wrapping to a new line */
+        }
+
+        #legend-title {
+            color: white;
+            opacity: 1;
+            margin-left: 5px;
+            min-width: 140px;
+            /* line height divides space between options */
+            line-height: 15px;
+            margin-bottom: 265px;
+        }
+
+        .legend-key {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .map-overlay3 {
+            background: rgba(9, 9, 9, 0.4);
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            top: 10px;
+            right: 20px;
+            padding: 20px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="map"></div>
+
+<!-- Bar -->
+<div class='map-overlay'>
+    <div class='map-overlay-inner'>
+        <table>
+            <tr>
+                <td>
+                    <label id='year1' style="color: white">1860</label>
+                </td>
+                <td>
+                    <input id='slider' style="color: white" type='range' min='1860' max='2022' step='1' value='1860' list='tickmarks'
+                           title="1860"/>
+                    <datalist id="tickmarks">
+                    </datalist>
+                </td>
+                <td>
+                    <label id='year2' style="color: white">2022</label>
+                </td>
+            </tr>
+        </table>
+        <div class="buttons" style="color: white; margin-left: 10px;">
+            <button id="startButton">Start</button>
+            <button id="stopButton">Stop</button>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;Source:<a href="http://crowding.data.tfl.gov.uk/" style="color:white;"> TFL</a>
+        </div>
+    </div>
+</div>
+
+<!-- Popup -->
+<div class='map-overlay1'>
+    <h2 id="timetxt" style='color: white; margin: 0;'>Now you are in 1990</h2>
+    <hr>
+    <div id="popup" style="color: white"></div>
+</div>
+
+<!-- Text -->
+<div class='map-overlay3' id="intro">
+    <h2 style='color: white; text-align: center;'>London Underground Development</h2>
+    <p style='color: white; padding-left: 15px; padding-right: 15px; line-height: 20px;'>The history of the London Underground can be traced back to the 19th century. As an unprecedented commute mode, it was designed to solve the increasing ground traffic congestion caused by rapid urban development and boosting population. Soon, this ambitious attempt achieved great success. After the opening of the first tube line in 1863, 9.5 million passengers were delivered in the first 12 months, then this number increased to 12 million by the end of the second year (Simpson, 2003).<br /><br />The development of the London Underground over the past 150 years has been astonishing, animation on the left side clearly displays its growth. Nowadays, as one of the densest public transportation networks in the world, the London Underground has expanded to 11 lines covering 402 km and serving over five million passengers per day (TfL,2023).</p>
+</div>
+
+<!-- Legend -->
+<div class='map-overlay2' id='legend'></div>
+<div class='map-overlay2' id='legend-title'><Title>Legend Title</Title></div>
+<script>
+    const tubeLegendValues = [
+        {value: 'WaterlooCi', color: '#76d0bd'},
+        {value: 'Bakerloo', color: '#894e24'},
+        {value: 'Central', color: '#dc241f'},
+        {value: 'District', color: '#007229'},
+        {value: 'Jubilee', color: '#2d3039'},
+        {value: 'Northern', color: '#000000'},
+        {value: 'Piccadilly', color: '#0019a8'},
+        {value: 'Victoria', color: '#00a0e2'},
+        {value: 'H&C and Circle', color: '#ffce00'},
+        {value: 'Metropolitan', color: '#751056'},
+    ];
+
+    const tickmarks = document.getElementById('tickmarks');
+    const startYear = 1860;
+    const endYear = 2022;
+    for (let year = startYear; year <= endYear; year++) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.label = year;
+        tickmarks.appendChild(option);
+    }
+
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const slider = document.getElementById('slider');
+    const popup = document.getElementById('popup');
+    const maxRecords = 8;
+    const eventList = [];
+    var records = [];
+
+    let intervalId;
+
+    startButton.addEventListener('click', function () {
+        let currentValue = parseInt(slider.value);
+        const maxValue = parseInt(slider.max);
+        clearInterval(intervalId);
+
+        intervalId = setInterval(function () {
+            currentValue++;
+            slider.value = currentValue.toString();
+            if (currentValue >= maxValue) {
+                clearInterval(intervalId);
+
+                // reset autoplay
+                slider.value = parseInt(slider.min);
+                startButton.dispatchEvent(new Event('click'));
+                records = [];
+            }
+            slider.dispatchEvent(new Event('input'));
+        }, 100);
+
+
+    });
+    stopButton.addEventListener('click', function () {
+        clearInterval(intervalId);
+    });
+
+    slider.addEventListener('input', function () {
+        slider.title = slider.value;
+        updateYearContent();
+        updateByYear(slider.value);
+
+        const value = slider.value;
+        var text = '';
+
+        for (let i = 0; i < eventList.length; i++) {
+            if (eventList[i][0] == value) {
+                text = value + ': ' + eventList[i][1] + ' ' + eventList[i][2];
+                break;
+            }
+        }
+        if (text != '') {
+            // Add new record to beginning of array
+            records.unshift(text);
+            // Limit records array to maxRecords items
+            records.splice(maxRecords);
+
+            let table = document.createElement('table');
+
+            for (let i = 0; i < records.length; i++) {
+                let tr = document.createElement('tr');
+                let td = document.createElement('td');
+                td.innerText = records[i];
+                tr.appendChild(td);
+                table.appendChild(tr);
+            }
+            let popup = document.getElementById('popup');
+            popup.innerHTML = '';
+            popup.appendChild(table);
+
+        }
+    });
+
+    // slider.addEventListener('input', function (){
+    //     updateYearContent();
+    //
+    // });
+
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamFjay14aWEiLCJhIjoiY2tzeWI0ZzY4MmhiazJucGdmOHpseWMydiJ9.BGwgjm240AKVbV60tdMJBQ';
+    basemap_style_URL = 'mapbox://styles/jack-xia/clea1ea2400ba01mt3zvc4yhm';
+
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: basemap_style_URL,
+        center: [-0.09, 51.505],
+        zoom: 11,
+    });
+
+
+    map.on('load', () => {
+        map.addSource('london_tube', {
+            'type': 'geojson',
+            'data': 'https://raw.githubusercontent.com/X-Fan-Jack/tube-empower-london-regeneration/master/data/london_tube.geojson',
+            'generateId': true,
+        });
+        map.addLayer(
+            {
+                'id': 'london_tube_update',
+                'type': 'line',
+                'source': 'london_tube',
+                'paint': {
+                    'line-color': [
+                        'match',
+                        ['get', 'Line_name'],
+                        'WaterlooCi', 'rgba(92, 145, 234, 0.2)',
+                        'Bakerloo', 'rgba(92, 145, 234, 0.2)',
+                        'Central', 'rgba(92, 145, 234, 0.2)',
+                        'District', 'rgba(92, 145, 234, 0.2)',
+                        'Jubilee', 'rgba(92, 145, 234, 0.2)',
+                        'Northern', 'rgba(92, 145, 234, 0.2)',
+                        'Piccadilly', 'rgba(92, 145, 234, 0.2)',
+                        'Victoria', 'rgba(92, 145, 234, 0.2)',
+                        'H&C and Circle', 'rgba(92, 145, 234, 0.2)',
+                        'Metropolitan', 'rgba(92, 145, 234, 0.2)',
+                        'rgb(0,0,0)',
+                    ],
+                    // 'line-opacity': 0,
+                    'line-width': 10,
+                },
+            },
+        );
+        map.addLayer(
+            {
+                'id': 'london_tube',
+                'type': 'line',
+                'source': 'london_tube',
+                'paint': {
+                    'line-color': [
+                        'match',
+                        ['get', 'Line_name'],
+                        'WaterlooCi', '#76d0bd',
+                        'Bakerloo', '#894e24',
+                        'Central', '#dc241f',
+                        'District', '#007229',
+                        'Jubilee', '#2d3039',
+                        'Northern', '#000000',
+                        'Piccadilly', '#0019a8',
+                        'Victoria', '#00a0e2',
+                        'H&C and Circle', '#ffce00',
+                        'Metropolitan', '#751056',
+                        'rgb(0,0,0)',
+                    ],
+                    // 'line-opacity': 0,
+                    'line-width': 2,
+                },
+            },
+        );
+
+        addLegend();
+        slider.dispatchEvent(new Event('input'));
+        startButton.dispatchEvent(new Event('click')); // autoplay
+        getEventList();
+
+    });
+
+    function updateByYear(year) {
+        const filters = ['<=', 'built_time', year];
+        const filters_update = ['<=', 'last_extension', year];
+        map.setFilter('london_tube', filters);
+        map.setFilter('london_tube_update', filters_update);
+    };
+
+    function addLegend() {
+        let legend = document.getElementById('legend');
+        let legendTitle = document.getElementById('legend-title');
+        legend.innerHTML = '';
+        legendTitle.innerHTML = 'London Tube Line';
+        tubeLegendValues.forEach((item) => {
+            let key = document.createElement('span');
+            key.className = 'legend-key';
+            key.style.backgroundColor = item.color;
+
+            let label = document.createElement('span');
+            label.innerHTML = item.value;
+
+            let legendItem = document.createElement('div');
+            legendItem.appendChild(key);
+            legendItem.appendChild(label);
+
+            legend.appendChild(legendItem);
+        });
+    };
+
+    function updateYearContent() {
+        document.getElementById("timetxt").innerHTML = "Now you are in " + slider.value;
+    }
+
+    function getEventList(){
+        var geojson;
+        fetch('https://raw.githubusercontent.com/X-Fan-Jack/tube-empower-london-regeneration/master/data/london_tube.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojson = data;
+
+                geojson.features.forEach((feature) => {
+                    // Get the name of the line and the time it was built and last updated
+                    const lineName = feature.properties.Line_name;
+                    const builtTime = parseInt(feature.properties.built_time);
+                    const lastExtensionTime = parseInt(feature.properties.last_extension);
+
+                    // Construct two events based on build time and last update time
+                    const builtEvent = [builtTime, lineName, 'built up'];
+                    const extendedEvent = [lastExtensionTime, lineName,'extended'];
+
+                    // Add these two events to the results list
+                    eventList.push(builtEvent, extendedEvent);
+
+                });
+            });
+
+    };
+
+
+</script>
+</body>
+</html>
