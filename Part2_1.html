@@ -21,8 +21,8 @@ body {
 
 .map-overlay{
     position: absolute;
-    top: 15px;
-    left: 15px;
+    top: 10px;
+    left: 10px;
     width: 430px;
     padding: 10px;
     border-radius: 5px;
@@ -88,11 +88,18 @@ body {
         cursor: pointer;
         border-radius: 4px;
         opacity: 0.8;
+        width: 200px;
     }
 
     .map-overlay button:hover {
         opacity: 1;
+        color: #fd8d3c;
     }
+
+    .mapboxgl-ctrl-top-right {
+    top: 10px !important;
+    right: 60px !important;
+}
 
 </style>
 
@@ -103,7 +110,7 @@ body {
     <div class='map-overlay'>
         <h2>The Development of Jubilee Line</h2>
         <p class="credit">Jubilee Line Station data:<a href="https://www.doogal.co.uk/london_stations#google_vignette"> doogal.co.uk</a></p>
-        <p class="credit">Jubilee Line data:<a href=""> CASA03 week2 practical</a></p>
+        <p class="credit">Jubilee Line data:<a href="https://api-portal.tfl.gov.uk/api-details"> TFL</a></p>
 
         <div class="buttons">
             <button id="toggleAnimation">Animation</button>
@@ -372,7 +379,8 @@ document.getElementById('toggleExtensionLayer').addEventListener('click', functi
     }
 });
 
-
+const beforeNavControl = new mapboxgl.NavigationControl({ showCompass: true });
+    map.addControl(beforeNavControl, 'top-right');
 </script>
 
 </body>

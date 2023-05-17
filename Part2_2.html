@@ -127,7 +127,7 @@
     
     .map-overlay button:hover {
         opacity: 1;
-        
+        color: #fd8d3c;
     }
     
     .map-overlay2 {
@@ -168,7 +168,7 @@
 	}
 
     .mapboxgl-ctrl-top-right {
-    top: 100px !important;
+    right: 60px !important;
 }
     </style>
 <body>
@@ -218,7 +218,7 @@
                 <button id="navigateButton2">Change Rate</button>
             </div>
             <div class="controls">
-                <select id="layer-select" onchange="showLayer(this.value, document.getElementById('year').innerText);" value="HP_mean">
+                <select id="layer-select" onchange="showLayer(this.value, document.getElementById('year').innerText)" value="HP_mean">
                     <option value="HP_mean" style="color:black">Mean House Price</option>
                     <option value="POP" style="color:black">Population</option>
                     <option value="INC_Mean" style="color:black">Average Gross Annual Household Income</option>
@@ -604,7 +604,7 @@ document.getElementById('layer-select').addEventListener('change', (event) => {
     showLayer(attribute, year);
 });
 
-document.getElementById('layer-select').dispatchEvent(new Event('change'));
+
 
 
 // Call updateLegend when the slider is moved

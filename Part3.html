@@ -40,7 +40,7 @@
     top: 40px;
     left: 10px;
     line-height: 20px;
-    width: 300px;
+    width: 340px;
     padding: 16px 14px 16px 20px;
     border-radius: 5px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -72,31 +72,32 @@
     
 }
 
-.buttons {
+.overlay p.buttons {
         display: flex;
         justify-content: space-between;
     }
-
-    button {
-    background-color: rgba(255,255,255,0);
-    background-image: url(fd-images/button1.png);
-    background-size: 100% 100%;
-    border: none;
-    color: white;
-    padding: 5px 9px; /* Update the padding to change the button size */
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 12px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-    opacity: 0.8;
-}
+    
+    .overlay button {
+        background-color: rgba(255,255,255,0);
+        background-image: url(fd-images/button3.png);
+        background-size: 100% 100%;
+        border: none;
+        color: white;
+        padding: 5px 9px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+        opacity: 0.8;
+    }
 
 
     button:hover {
         opacity: 1;
+        color: #fd8d3c;
     }
 
     .toggleFeatures {
@@ -120,7 +121,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 30%;
+    width: 25%;
     font-family: sans-serif;
     overflow-y: scroll;
     background-color: #fafafa;
@@ -218,7 +219,7 @@ table{
 <div id="overlay" class="overlay">
     <strong style="font-size: 20px;color: white;">The Change of Urban Form</strong></p>
     <p class="credit">Building Footprint data: <a href="https://digimap.edina.ac.uk/roam/download/os"> Digimap</a>
-    <p class="credit">Building Height data: <a href=""> CASA03 week3 practical</a>
+    <p class="credit">Building Height data: <a href="https://www.mapbox.com"> Mapbox</a>
     <div id="2007" class="keychip" style="border-color: #d9d9d9;">2007</div>
     <div id="2009" class="keychip" style="border-color: #e0f3db;">2009</div>
     <div id="2011" class="keychip" style="border-color: #ccebc5">2011</div>

@@ -93,6 +93,9 @@
 
 body {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
   font-family: var(--bs-body-font-family);
   font-size: var(--bs-body-font-size);
   font-weight: var(--bs-body-font-weight);
@@ -301,12 +304,42 @@ kbd kbd {
 }
 
 figure {
-  margin: 0 0 1rem;
+  --hov: 0;
+  --not-hov: calc(1 - var(--hov));
+  display: grid;
+  place-self: center;
+  margin: 0;
+  padding-top: 5%;
+  transform: scale(calc(1 - .1*var(--not-hov)));
+  overflow: hidden;
+  border-radius: 0 0 clamp(4em, 20vw, 15em) clamp(4em, 20vw, 15em);
 }
+figure::before, figure img {
+  grid-area: 1/1;
+  place-self: end center;
+}
+figure::before {
+  content: "";
+  padding: clamp(4em, 20vw, 15em);
+  border-radius: 50%;
+  background: url('assets/img/Jubileeline.png') 50%/cover;
+}
+figure:hover {
+  --hov: 1;
+}
+figure:img {
+  width: calc(2*clamp(4em, 20vw, 15em));
+  border-radius: clamp(4em, 20vw, 15em);
+  transform: translateY(calc((1 - var(--hov))*10%)) scale(calc(1.25 + .05*var(--hov)));
+}
+
 
 img,
 svg {
   vertical-align: middle;
+  border:0;
+  margin:0;
+  padding:0;
 }
 
 table {
@@ -483,17 +516,6 @@ progress {
   display: none !important;
 }
 
-.iframebox {
-  width: 40rem;
-  position: absolute;
-}
-
-.iframebox2 {
-  width: 103rem;
-  height: 58rem;
-  position: absolute;
-}
-
 .zoom-in{
     transition: all 0.2s linear;
 }
@@ -501,6 +523,27 @@ progress {
 .zoom-in:hover{
     transform: scale(0.9);
     transition: all 0.2s linear;
+}
+
+.map_display {
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.map_overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    border-radius: 3px;
+
+    background-color: black;
+    text-align: left;
 }
 
 .lead {
@@ -651,6 +694,7 @@ progress {
 .container-sm {
   --bs-gutter-x: 1.5rem;
   --bs-gutter-y: 0;
+  height: 100%;
   width: 100%;
   padding-right: calc(var(--bs-gutter-x) * 0.5);
   padding-left: calc(var(--bs-gutter-x) * 0.5);
@@ -683,6 +727,43 @@ progress {
     max-width: 1320px;
   }
 }
+.container .card:hover{
+    height: 420px;
+}
+
+.container .card .imgBx{
+    position: relative;
+    width: 260px;
+    height: 260px;
+    top: -60px;
+    left: 20px;
+    z-index: 1;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.container .card .imgBx img{
+    max-width: 100%;
+    border-radius: 4px;
+}
+
+.container .card .content{
+    position: relative;
+    margin-top: -140px;
+    padding: 10px 15px;
+    text-align: center;
+    color: #111;
+    visibility: hidden;
+    opacity: 0;
+    transition: .3s ease-in-out;
+}
+
+.container .card:hover .content{
+    visibility: visible;
+    opacity: 1;
+    margin-top: -40px;
+    transition-delay: .3s;
+}
+
 .row {
   --bs-gutter-x: 1.5rem;
   --bs-gutter-y: 0;
@@ -1503,6 +1584,14 @@ progress {
   .col-xl-12 {
     flex: 0 0 auto;
     width: 100%;
+  }
+  .col-xl-13 {
+    flex: 0 0 auto;
+    width: 110%;
+  }
+  .col-xl-14 {
+    flex: 0 0 auto;
+    width: 150%;
   }
   .offset-xl-0 {
     margin-left: 0;
@@ -3762,7 +3851,6 @@ textarea.form-control-lg {
   --bs-navbar-toggler-padding-y: 0.25rem;
   --bs-navbar-toggler-padding-x: 0.75rem;
   --bs-navbar-toggler-font-size: 1.25rem;
-  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
   --bs-navbar-toggler-border-color: rgba(0, 0, 0, 0.1);
   --bs-navbar-toggler-border-radius: 0.375rem;
   --bs-navbar-toggler-focus-width: 0.25rem;
@@ -4166,7 +4254,6 @@ textarea.form-control-lg {
   --bs-navbar-brand-color: #fff;
   --bs-navbar-brand-hover-color: #fff;
   --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);
-  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 .card {
@@ -7635,26 +7722,6 @@ textarea.form-control-lg {
   margin-top: 3rem !important;
 }
 
-.mt-6 {
-  margin-top: 3.5rem !important;
-}
-
-.mt-7 {
-  margin-top: 5rem !important;
-}
-
-.mt-8 {
-  margin-top: 5.5rem !important;
-}
-
-.mt-9 {
-  margin-top: 7rem !important;
-}
-
-.mt-10 {
-  margin-top: 10rem !important;
-}
-
 .mt-auto {
   margin-top: auto !important;
 }
@@ -7681,14 +7748,6 @@ textarea.form-control-lg {
 
 .me-5 {
   margin-right: 3rem !important;
-}
-
-.me-6 {
-  margin-right: 3.5rem !important;
-}
-
-.me-6 {
-  margin-right: 5rem !important;
 }
 
 .me-auto {
@@ -7745,14 +7804,6 @@ textarea.form-control-lg {
 
 .ms-5 {
   margin-left: 3rem !important;
-}
-
-.ms-6 {
-  margin-left: 3.5rem !important;
-}
-
-.ms-7 {
-  margin-left: 5rem !important;
 }
 
 .ms-auto {
@@ -8150,29 +8201,24 @@ textarea.form-control-lg {
   color: #6c757d !important;
 }
 
-.text-black-50 {
+.text-black-75 {
   --bs-text-opacity: 1;
-  color: rgba(0, 0, 0, 0.5) !important;
+  color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.text-black-70 {
+  --bs-text-opacity: 1;
+  color: rgba(0, 0, 0, 0.70) !important;
+}
+
+.text-black-65 {
+  --bs-text-opacity: 1;
+  color: rgba(0, 0, 0, 0.65) !important;
 }
 
 .text-black-60 {
   --bs-text-opacity: 1;
   color: rgba(0, 0, 0, 0.6) !important;
-}
-
-.text-black-70 {
-  --bs-text-opacity: 1;
-  color: rgba(0, 0, 0, 0.7) !important;
-}
-
-.text-black-80 {
-  --bs-text-opacity: 1;
-  color: rgba(0, 0, 0, 0.8) !important;
-}
-
-.text-white-50 {
-  --bs-text-opacity: 1;
-  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 .text-reset {
@@ -9507,6 +9553,30 @@ textarea.form-control-lg {
   .align-self-lg-stretch {
     align-self: stretch !important;
   }
+  .order-lg-first {
+    order: -1 !important;
+  }
+  .order-lg-0 {
+    order: 0 !important;
+  }
+  .order-lg-1 {
+    order: 1 !important;
+  }
+  .order-lg-2 {
+    order: 2 !important;
+  }
+  .order-lg-3 {
+    order: 3 !important;
+  }
+  .order-lg-4 {
+    order: 4 !important;
+  }
+  .order-lg-5 {
+    order: 5 !important;
+  }
+  .order-lg-last {
+    order: 6 !important;
+  }
   .m-lg-0 {
     margin: 0 !important;
   }
@@ -9524,12 +9594,6 @@ textarea.form-control-lg {
   }
   .m-lg-5 {
     margin: 3rem !important;
-  }
-  .m-lg-6 {
-    margin: 3.5rem !important;
-  }
-  .m-lg-7 {
-    margin: 5rem !important;
   }
   .m-lg-auto {
     margin: auto !important;
@@ -9557,14 +9621,6 @@ textarea.form-control-lg {
   .mx-lg-5 {
     margin-right: 3rem !important;
     margin-left: 3rem !important;
-  }
-  .mx-lg-6 {
-    margin-right: 3.5rem !important;
-    margin-left: 3.5rem !important;
-  }
-  .mx-lg-7 {
-    margin-right: 5rem !important;
-    margin-left: 5rem !important;
   }
   .mx-lg-auto {
     margin-right: auto !important;
@@ -9594,14 +9650,6 @@ textarea.form-control-lg {
     margin-top: 3rem !important;
     margin-bottom: 3rem !important;
   }
-  .my-lg-6 {
-    margin-top: 3.5rem !important;
-    margin-bottom: 3.5rem !important;
-  }
-  .my-lg-7 {
-    margin-top: 5rem !important;
-    margin-bottom: 5rem !important;
-  }
   .my-lg-auto {
     margin-top: auto !important;
     margin-bottom: auto !important;
@@ -9624,12 +9672,6 @@ textarea.form-control-lg {
   .mt-lg-5 {
     margin-top: 3rem !important;
   }
-  .mt-lg-6 {
-    margin-top: 3.5rem !important;
-  }
-  .mt-lg-7 {
-    margin-top: 5rem !important;
-  }
   .mt-lg-auto {
     margin-top: auto !important;
   }
@@ -9650,12 +9692,6 @@ textarea.form-control-lg {
   }
   .me-lg-5 {
     margin-right: 3rem !important;
-  }
-  .me-lg-6 {
-    margin-right: 3.5rem !important;
-  }
-  .me-lg-7 {
-    margin-right: 5rem !important;
   }
   .me-lg-auto {
     margin-right: auto !important;
@@ -9678,12 +9714,6 @@ textarea.form-control-lg {
   .mb-lg-5 {
     margin-bottom: 3rem !important;
   }
-  .mb-lg-6 {
-    margin-bottom: 3.5rem !important;
-  }
-  .mb-lg-7 {
-    margin-bottom: 5rem !important;
-  }
   .mb-lg-auto {
     margin-bottom: auto !important;
   }
@@ -9704,12 +9734,6 @@ textarea.form-control-lg {
   }
   .ms-lg-5 {
     margin-left: 3rem !important;
-  }
-  .ms-lg-6 {
-    margin-left: 3.5rem !important;
-  }
-  .ms-lg-7 {
-    margin-left: 5rem !important;
   }
   .ms-lg-auto {
     margin-left: auto !important;
@@ -9761,8 +9785,8 @@ textarea.form-control-lg {
     padding-bottom: 0 !important;
   }
   .py-lg-1 {
-    padding-top: 0.25rem !important;
-    padding-bottom: 0.25rem !important;
+    padding-top: 0.1rem !important;
+    padding-bottom: 0.1rem !important;
   }
   .py-lg-2 {
     padding-top: 0.5rem !important;
@@ -10844,6 +10868,9 @@ textarea.form-control-lg {
   .ps-xxl-5 {
     padding-left: 3rem !important;
   }
+  .ps-xxl-6 {
+    padding-left: 4.5rem !important;
+  }
   .gap-xxl-0 {
     gap: 0 !important;
   }
@@ -10918,13 +10945,11 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
-
 html {
   scroll-padding-top: 4.5rem;
 }
 
-html,body{
-  position: relative;
+html,body {
   margin: 0 0;
   padding: 0;
   border: 0;
@@ -10932,18 +10957,12 @@ html,body{
   width: 100%;
 }
 
-section {
-  height: 100%;
-  width: 100%;
-}
-
 iframe {
   margin: 0 0;
-  margin-bottom: 10rem;
-  width: 100vw;
-  height: 100vh;
-  vertical-align: middle;
+  width: 100%;
+  height: 100%;
 }
+
 
 body {
   position: relative;
@@ -10953,32 +10972,49 @@ p {
   line-height: 1.75;
 }
 
+
+.iframe {
+  width:60rem;
+  position: absolute;
+}
+.iframebox {
+  width: 35rem;
+  position: absolute;
+}
+
 .page-section {
-  padding: 6rem 0;
+  padding: 5rem 0;
 }
 .page-section h2.section-heading, .page-section .section-heading.h2 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin-top: 0;
   margin-bottom: 1rem;
 }
 .page-section h3.section-subheading, .page-section .section-subheading.h3 {
-  font-size: 1rem;
-  font-weight: 400;
-  font-style: italic;
-  font-family: "Roboto Slab", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  margin-bottom: 4rem;
+  width: 26rem;
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+.page-section h4.section-subheading, .page-section .section-subheading.h4 {
+  width: 23rem;
+  font-size: 1.6rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
 }
 
 @media (min-width: 768px) {
   section {
-    padding: 9rem 0;
+  padding: 9rem 0;
   }
 }
 .btn-xl {
-  padding: 1rem 2.2rem;
+  padding: 1rem 2rem;
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 700;
+  margin-top: 15rem;
+  margin-left: -3rem; 
 }
 
 .btn-social {
@@ -11020,7 +11056,7 @@ p {
   letter-spacing: 0.0625em;
 }
 #mainNav .navbar-nav .nav-item .nav-link.active, #mainNav .navbar-nav .nav-item .nav-link:hover {
-  color: #ffc800;
+  color: #FFC93C;
 }
 
 @media (min-width: 992px) {
@@ -11058,7 +11094,6 @@ p {
     margin-right: 0;
   }
 }
-
 header.masthead {
   padding-top: 10.5rem;
   padding-bottom: 6rem;
@@ -11072,37 +11107,34 @@ header.masthead {
 }
 header.masthead .masthead-subheading {
   font-size: 1.5rem;
-  font-style: italic;
-  line-height: 1.5rem;
+  line-height: 2rem;
   margin-bottom: 25px;
   font-family: "Roboto Slab", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 header.masthead .masthead-heading {
-  font-size: 3.25rem;
-  font-weight: 700;
-  line-height: 3.25rem;
-  margin-bottom: 2rem;
+  font-size: 5rem;
+  font-weight: 1000;
+  line-height: 6rem;
+  margin-bottom: 1rem;
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 @media (min-width: 768px) {
   header.masthead {
-    padding-top: 17rem;
-    padding-bottom: 12.5rem;
+    height: 100vh;
+    padding: 0;
   }
   header.masthead .masthead-subheading {
-    font-size: 2.25rem;
-    font-style: italic;
-    line-height: 2.25rem;
-    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
   }
   header.masthead .masthead-heading {
-    font-size: 4.5rem;
-    font-weight: 700;
-    line-height: 4.5rem;
-    margin-bottom: 4rem;
+    font-size: 5rem;
+    font-weight: 1000;
+    line-height: 6rem;
   }
 }
+
 #portfolio .portfolio-item {
   max-width: 26rem;
   margin-left: auto;
@@ -11153,10 +11185,12 @@ header.masthead .masthead-heading {
   max-height: 100vh;
 }
 .portfolio-modal .modal-content {
+  text-align: center;
   margin: 0 0;
   padding: 0;
   border: 0;
-  text-align: center;
+  height: 56rem;
+  width: 100%;
 }
 .portfolio-modal .modal-content h2, .portfolio-modal .modal-content .h2 {
   font-size: 3rem;
@@ -11188,7 +11222,13 @@ header.masthead .masthead-heading {
 .portfolio-modal .close-modal:hover {
   opacity: 0.5;
 }
-
+.portfolio-modal .map {
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  width: 100%;
+  height: 56rem;
+}
 .timeline {
   position: relative;
   padding: 0;
@@ -11199,7 +11239,7 @@ header.masthead .masthead-heading {
   top: 0;
   bottom: 0;
   left: 40px;
-  width: 2px;
+  width: 4px;
   margin-left: -1.5px;
   content: "";
   background-color: #e9ecef;
@@ -11220,6 +11260,7 @@ header.masthead .masthead-heading {
   position: relative;
   float: right;
   width: 100%;
+  padding: 0 20px 0 100px;
   text-align: left;
 }
 .timeline > li .timeline-panel:before {
@@ -11243,9 +11284,9 @@ header.masthead .masthead-heading {
   margin-left: 0;
   text-align: center;
   color: white;
-  border: 5px solid #ffc800;
+  border: 5px solid #FFC93C;
   border-radius: 100%;
-  background-color: #ffc800;
+  background-color: #FFC93C;
 }
 .timeline > li .timeline-image h4, .timeline > li .timeline-image .h4 {
   font-size: 10px;
@@ -11254,6 +11295,7 @@ header.masthead .masthead-heading {
 }
 .timeline > li.timeline-inverted > .timeline-panel {
   float: right;
+  padding: 0 20px 0 100px;
   text-align: left;
 }
 .timeline > li.timeline-inverted > .timeline-panel:before {
@@ -11293,8 +11335,8 @@ header.masthead .masthead-heading {
   }
   .timeline > li .timeline-panel {
     float: left;
-    width: 41%;
-    padding: 0 20px 20px 30px;
+    width: 42%;
+    padding: 0 10px 10px 30px;
     text-align: right;
   }
   .timeline > li .timeline-image {
@@ -11364,8 +11406,57 @@ header.masthead .masthead-heading {
   font-size: 1.1rem;
   font-weight: normal;
 }
-.img-brand {
-  height: 2.75rem;
+
+section#contact {
+  background-color: #212529;
+  background-position: center;
+}
+section#contact .section-heading {
+  color: #fff;
+}
+section#contact form#contactForm .form-group {
+  margin-bottom: 1.5rem;
+}
+section#contact form#contactForm .form-group input,
+section#contact form#contactForm .form-group textarea {
+  padding: 1.25rem;
+}
+section#contact form#contactForm .form-group input.form-control {
+  height: auto;
+}
+section#contact form#contactForm .form-group-textarea {
+  height: 100%;
+}
+section#contact form#contactForm .form-group-textarea textarea {
+  height: 100%;
+  min-height: 10rem;
+}
+section#contact form#contactForm p.help-block {
+  margin: 0;
+}
+section#contact form#contactForm .form-control:focus {
+  border-color: #ffc800;
+  box-shadow: none;
+}
+section#contact form#contactForm ::-webkit-input-placeholder {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 700;
+  color: #ced4da;
+}
+section#contact form#contactForm :-moz-placeholder {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 700;
+  color: #ced4da;
+}
+section#contact form#contactForm ::-moz-placeholder {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 700;
+  color: #ced4da;
+}
+section#contact form#contactForm :-ms-input-placeholder {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-weight: 700;
+  color: #ced4da;
 }
 .footer {
   text-align: center;
