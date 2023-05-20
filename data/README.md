@@ -71,7 +71,7 @@
 **File name**: building_yyyy.geojson
 **Format**: Geojson, Polygon
 **Data source**: [Digimap - OS Data Download](https://digimap.edina.ac.uk/roam/download/os)
-**Processed by**: Xia, Fan
+**Processed by**: Xia, Fan/ Jingyi wang 
 **Attributes**: absh2, relh2,
 **CRS**: EPSG4326
 **Example**:   
@@ -117,8 +117,3 @@
 **Attributes**: Stations, geometry
 **CRS** EPSG4326
 
-### Building Heights
-
-**File name**: LondonBuildingHeights.mbtiles
-**Data source** Week3 practical of CASA03
-**Processed by**: Pin Lyu
