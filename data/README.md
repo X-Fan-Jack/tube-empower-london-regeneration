@@ -103,7 +103,7 @@
 **File name**: TfL_lines_update.shp   
 **Format**: shapefile   
 **Data source**: Week2 Practical of CASA03   
-**Processed by**: Pin Lyu, Xia Fan   
+**Processed by**: Pin Lyu    
 **Attributes**: Lines, geometry   
 **CRS**: EPSG4326   
 **Example**    
