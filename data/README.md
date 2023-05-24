@@ -17,7 +17,7 @@
 **File name**: pop_02to20_MSOA.csv
 **Format**: CSV
 **Data source**: [ONS - Middle Super Output Area population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/middlesuperoutputareamidyearpopulationestimates) provided by Wang, Jingyi
-**Final process**: Gong, Yubin.
+**Final process**: Gong, Yubin.   
 **Sample**:     
 
 
@@ -28,11 +28,11 @@
 
 ### Housing price
 
-**File name**: houseprice_msoa.csv
-**Format**: CSV
+**File name**: houseprice_msoa.csv   
+**Format**: CSV   
 **Data source**: [ONS - Median house prices by middle layer super output area](https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/hpssadataset2medianhousepricebymsoaquarterlyrollingyear); [ONS - Mean house prices by middle layer super output area](https://www.ons.gov.uk/peoplepopulationandcommunity/housing/datasets/hpssadataset3meanhousepricebymsoaquarterlyrollingyear)  provided by Wang, Jingyi; Gong, Yubin
-**Final process**: Gong, Yubin.
-**Sample**:
+**Final process**: Gong, Yubin.   
+**Sample**:   
 
 
 | Local authority code | Local authority name | MSOA code | MSOA name                | 1996_mean | ... |
@@ -42,10 +42,10 @@
 
 ### Income
 
-**File name**: income_01to12.csv; income_12to18.csv
-**Format**: CSV
-**Data source**: [London Datastore - Household Income Estimates for Small Areas 01-12](https://data.london.gov.uk/dataset/household-income-estimates-small-areas) provided by Wang, Jingyi; [ONS - Income estimates for small areas, 12-18](https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/smallareaincomeestimatesformiddlelayersuperoutputareasenglandandwales) provided by Gong, Yubin
-**Final process**: Gong, Yubin; Wang, Jingyi;
+**File name**: income_01to12.csv; income_12to18.csv   
+**Format**: CSV   
+**Data source**: [London Datastore - Household Income Estimates for Small Areas 01-12](https://data.london.gov.uk/dataset/household-income-estimates-small-areas) provided by Wang, Jingyi; [ONS - Income estimates for small areas, 12-18](https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/smallareaincomeestimatesformiddlelayersuperoutputareasenglandandwales) provided by Gong, Yubin   
+**Final process**: Gong, Yubin; Wang, Jingyi;   
 **Sample**:    
 
 
@@ -58,23 +58,23 @@
 
 ### MOSA
 
-**File name**: MSOA_London.json
-**Format**: Geojson, polygon
-**Data source**: [ONS - MSOA (Dec 2001) Boundaries](https://geoportal.statistics.gov.uk/datasets/ons::msoa-dec-2001-boundaries-ew-bfc/about) provide by Xia, Fan
-**Processed by**: Xia, Fan
-**Attributes**: MOSA_Code, MOSA_Name
-**CRS**: EPSG4326
-**MOSA_CODE**: E02000001-E02000983
+**File name**: MSOA_London.json   
+**Format**: Geojson, polygon   
+**Data source**: [ONS - MSOA (Dec 2001) Boundaries](https://geoportal.statistics.gov.uk/datasets/ons::msoa-dec-2001-boundaries-ew-bfc/about) provide by Xia, Fan   
+**Processed by**: Xia, Fan   
+**Attributes**: MOSA_Code, MOSA_Name   
+**CRS**: EPSG4326   
+**MOSA_CODE**: E02000001-E02000983   
 
 ### Building footprint
 
-**File name**: building_yyyy.geojson
-**Format**: Geojson, Polygon
-**Data source**: [Digimap - OS Data Download](https://digimap.edina.ac.uk/roam/download/os)
-**Processed by**: Xia, Fan/ Jingyi wang 
-**Attributes**: absh2, relh2,
-**CRS**: EPSG4326
-**Example**:   
+**File name**: building_yyyy.geojson   
+**Format**: Geojson, Polygon   
+**Data source**: [Digimap - OS Data Download](https://digimap.edina.ac.uk/roam/download/os)   
+**Processed by**: Xia, Fan/ Jingyi wang    
+**Attributes**: absh2, relh2,   
+**CRS**: EPSG4326   
+**Example**:      
 
 
 | absh2 | relh2 |
@@ -84,13 +84,13 @@
 
 ### Tube line
 
-**File name**: london_tube.json
-**Format**: Geojson, line
-**Data source**: Practical of CASA03
-**Processed by**: Xia, Fan
-**Attributes**: Line_name, built_time, last_extension,
-**CRS**: EPSG4326
-**Example**:   
+**File name**: london_tube.json   
+**Format**: Geojson, line   
+**Data source**: Practical of CASA03   
+**Processed by**: Xia, Fan   
+**Attributes**: Line_name, built_time, last_extension,   
+**CRS**: EPSG4326   
+**Example**:      
 
 
 | Line_name  | built_time | last_extension |
@@ -100,20 +100,20 @@
 
 ### Tube line
 
-**File name**: TfL_lines_update.shp
-**Format**: shapefile
-**Data source**: Week2 Practical of CASA03
-**Processed by**: Pin Lyu
-**Attributes**: Lines, geometry
-**CRS**: EPSG4326
-**Example**
+**File name**: TfL_lines_update.shp   
+**Format**: shapefile   
+**Data source**: Week2 Practical of CASA03   
+**Processed by**: Pin Lyu, Xia Fan   
+**Attributes**: Lines, geometry   
+**CRS**: EPSG4326   
+**Example**    
 
 ### Stations
 
-**File name**: London stations.json
-**Format**: Geojson
-**Data source**: [doogal.co.uk](https://www.doogal.co.uk/london_stations#google_vignette)
-**Processed by**: Pin Lyu
-**Attributes**: Stations, geometry
-**CRS** EPSG4326
+**File name**: London stations.json   
+**Format**: Geojson   
+**Data source**: [doogal.co.uk](https://www.doogal.co.uk/london_stations#google_vignette)   
+**Processed by**: Pin Lyu   
+**Attributes**: Stations, geometry   
+**CRS** EPSG4326   
 
