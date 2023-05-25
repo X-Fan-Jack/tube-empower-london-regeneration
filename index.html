@@ -138,9 +138,9 @@
             margin-bottom: 40px;
             line-height: 20px;
             min-height: 140px;
-            min-width: 140px; /* Set a minimum width */
-            max-width: 100%; /* Allow the legend to expand to the full width based on the content */
-            white-space: nowrap; /* Prevent the text from wrapping to a new line */
+            min-width: 140px; 
+            max-width: 100%; 
+            white-space: nowrap; 
         }
 
         #legend-title {
@@ -148,7 +148,6 @@
             opacity: 1;
             margin-left: 5px;
             min-width: 140px;
-            /* line height divides space between options */
             line-height: 15px;
             margin-bottom: 265px;
         }
@@ -177,7 +176,6 @@
 <body>
 <div id="map"></div>
 
-<!-- Bar -->
 <div class='map-overlay'>
     <div class='map-overlay-inner'>
         <table>
@@ -203,20 +201,17 @@
     </div>
 </div>
 
-<!-- Popup -->
 <div class='map-overlay1'>
     <h2 id="timetxt" style='color: white; margin: 0;'>Now you are in 1990</h2>
     <hr>
     <div id="popup" style="color: white"></div>
 </div>
 
-<!-- Text -->
 <div class='map-overlay3' id="intro">
     <h2 style='color: white; text-align: center;'>London Underground Development</h2>
     <p style='color: white; padding-left: 15px; padding-right: 15px; line-height: 20px;'>The history of the London Underground can be traced back to the 19th century. As an unprecedented commute mode, it was designed to solve the increasing ground traffic congestion caused by rapid urban development and boosting population. Soon, this ambitious attempt achieved great success. After the opening of the first tube line in 1863, 9.5 million passengers were delivered in the first 12 months, then this number increased to 12 million by the end of the second year (Simpson, 2003).<br /><br />The development of the London Underground over the past 150 years has been astonishing, animation on the left side clearly displays its growth. Nowadays, as one of the densest public transportation networks in the world, the London Underground has expanded to 11 lines covering 402 km and serving over five million passengers per day (TfL,2023).</p>
 </div>
 
-<!-- Legend -->
 <div class='map-overlay2' id='legend'></div>
 <div class='map-overlay2' id='legend-title'><Title>Legend Title</Title></div>
 <script>
@@ -264,7 +259,6 @@
             if (currentValue >= maxValue) {
                 clearInterval(intervalId);
 
-                // reset autoplay
                 slider.value = parseInt(slider.min);
                 startButton.dispatchEvent(new Event('click'));
                 records = [];
@@ -293,9 +287,8 @@
             }
         }
         if (text != '') {
-            // Add new record to beginning of array
             records.unshift(text);
-            // Limit records array to maxRecords items
+
             records.splice(maxRecords);
 
             let table = document.createElement('table');
@@ -314,10 +307,6 @@
         }
     });
 
-    // slider.addEventListener('input', function (){
-    //     updateYearContent();
-    //
-    // });
 
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiamFjay14aWEiLCJhIjoiY2tzeWI0ZzY4MmhiazJucGdmOHpseWMydiJ9.BGwgjm240AKVbV60tdMJBQ';
@@ -358,7 +347,7 @@
                         'Metropolitan', 'rgba(92, 145, 234, 0.2)',
                         'rgb(0,0,0)',
                     ],
-                    // 'line-opacity': 0,
+
                     'line-width': 10,
                 },
             },
@@ -384,7 +373,7 @@
                         'Metropolitan', '#751056',
                         'rgb(0,0,0)',
                     ],
-                    // 'line-opacity': 0,
+
                     'line-width': 2,
                 },
             },
@@ -392,7 +381,7 @@
 
         addLegend();
         slider.dispatchEvent(new Event('input'));
-        startButton.dispatchEvent(new Event('click')); // autoplay
+        startButton.dispatchEvent(new Event('click')); 
         getEventList();
 
     });
@@ -437,16 +426,15 @@
                 geojson = data;
 
                 geojson.features.forEach((feature) => {
-                    // Get the name of the line and the time it was built and last updated
+ 
                     const lineName = feature.properties.Line_name;
                     const builtTime = parseInt(feature.properties.built_time);
                     const lastExtensionTime = parseInt(feature.properties.last_extension);
 
-                    // Construct two events based on build time and last update time
                     const builtEvent = [builtTime, lineName, 'built up'];
                     const extendedEvent = [lastExtensionTime, lineName,'extended'];
 
-                    // Add these two events to the results list
+       
                     eventList.push(builtEvent, extendedEvent);
 
                 });

@@ -14,8 +14,8 @@
     body { margin:0; padding:0; }
     #map-left { position:absolute; top:0; bottom:0; left: 0; width:50%; }
     #map-right { position:absolute; top:0; bottom:0; width:50%; }
-    .clearfix{*zoom:1;}/*兼容IE清除浮动*/
-	.clearfix:after{content:"\200B";height:0;display:block;visibility:hidden;clear:both;}/*清除浮动*/
+    .clearfix{*zoom:1;}
+	.clearfix:after{content:"\200B";height:0;display:block;visibility:hidden;clear:both;}
     .draggable-bar {
     position: absolute;
     top: 0;
@@ -188,7 +188,7 @@
 	}
     
     .mapboxgl-ctrl-top-right {
-    right: 60px !important;
+    top: 80px !important;
 }
     </style>
 <body>
@@ -285,7 +285,7 @@
             pitch: 50
         });
 
-        let isZooming = false;  // Variable to prevent infinite zoom loop
+        let isZooming = false; 
 
 mapLeft.on('zoom', function() {
     if (!isZooming) {
@@ -306,7 +306,7 @@ mapRight.on('zoom', function() {
 });
 
 
-// Set up the draggable bar
+
 var isDragging = false;
 var draggableBar = document.querySelector('.draggable-bar');
 draggableBar.addEventListener('mousedown', function (e) {
@@ -329,12 +329,12 @@ document.addEventListener('mouseup', function () {
     isDragging = false;
 });
 
-// Function to load the layers
+
 function loadLayers(mapInstance) {
     mapInstance.on('load', function () {
-        // Set global light properties which influence 3D layer shadows
+
         mapInstance.setLight({ color: "#fff", intensity: 0.15, position: [1.15, 210, 30] });
-        // Add standard navigation control
+
         mapInstance.addControl(new mapboxgl.NavigationControl());
 
         
@@ -385,7 +385,7 @@ function addCentroidLayerWithAttribute(year, attribute, stops, stops2) {
                         ['linear'],
                         ['get', attribute + '_' + year],
                         ...stops2
-                     // Adjust these values to control the height of the cylinders
+
                     ],
                     'fill-extrusion-opacity': 1,
                     'fill-extrusion-base': 0
@@ -607,7 +607,7 @@ else if (attribute === 'INC_Mean') {
     years.forEach(year => {
 
         addLayerWithAttribute(year, 'POP', popDensityStops);
-        addCentroidLayerWithAttribute(year, 'POP',popDensityStops, popDensityHeightStops); // Add this line
+        addCentroidLayerWithAttribute(year, 'POP',popDensityStops, popDensityHeightStops); 
         addLayerWithAttribute(year, 'HP_mean', housePriceStops);
     addCentroidLayerWithAttribute(year, 'HP_mean', housePriceStops, housePriceHeightStops);
     addLayerWithAttribute(year, 'INC_Mean', incomeStops);
@@ -617,7 +617,7 @@ else if (attribute === 'INC_Mean') {
 
     years.forEach(year => {
         mapInstance.setLayoutProperty('layer-' + year + '-POP', 'visibility', 'none');
-        mapInstance.setLayoutProperty('layer-' + year + '-POP-centroid', 'visibility', 'none'); // Add this line
+        mapInstance.setLayoutProperty('layer-' + year + '-POP-centroid', 'visibility', 'none');
         mapInstance.setLayoutProperty('layer-' + year + '-HP_mean', 'visibility', 'none');
     mapInstance.setLayoutProperty('layer-' + year + '-HP_mean-centroid', 'visibility', 'none');
     mapInstance.setLayoutProperty('layer-' + year + '-INC_Mean', 'visibility', 'none');
@@ -637,7 +637,7 @@ else if (attribute === 'INC_Mean') {
     if (year && attribute) {
         mapInstance.setLayoutProperty('layer-' + year + '-' + attribute, 'visibility', 'visible');
         mapInstance.setLayoutProperty('layer-' + year + '-' + attribute + '-centroid', 'visibility', 'visible');
- // Update overlay content based on the attribute selected
+
  let overlayText;
         switch(attribute) {
             case 'POP':
@@ -654,55 +654,54 @@ else if (attribute === 'INC_Mean') {
         }
         document.querySelector('.map-overlay-inner h2').innerText = overlayText;
     }
-    // Call updateLegend
+
     updateLegend(attribute);
     
 }
 
 
-// Create a function to handle the selection of both 'year-select' and 'layer-select' options
+
 function handleSelection() {
   let yearSelect = document.getElementById('year-select');
   let layerSelect = document.getElementById('layer-select');
   let year = yearSelect.value;
   let attribute = layerSelect.value;
 
-  // Show the selected layer on the map
+
   showLayer(attribute, year, mapLeft);
 }
 
 
-// Create a function to handle the selection of both 'year-select' and 'layer-select' options
+
 function handleSelection2() {
   let yearSelect2 = document.getElementById('year-select2');
   let layerSelect2 = document.getElementById('layer-select2');
   let year2 = yearSelect2.value;
   let attribute2 = layerSelect2.value;
 
-  // Show the selected layer on the map
   showLayer(attribute2, year2, mapRight);
 
 }
-// Add an event listener for 'year-select' input
+
 document.getElementById('year-select').addEventListener('input', (event) => {
-  // Call the handleSelection function when the 'year-select' option is changed
+
   handleSelection();
 });
-// Add an event listener for 'year-select' input
+
 document.getElementById('year-select2').addEventListener('input', (event) => {
-  // Call the handleSelection function when the 'year-select' option is changed
+
   handleSelection2();
 });
 
-// Add an event listener for 'layer-select' input
+
 document.getElementById('layer-select').addEventListener('input', (event) => {
-  // Call the handleSelection function when the 'layer-select' option is changed
+
   handleSelection();
 });
 
-// Add an event listener for 'layer-select' input
+
 document.getElementById('layer-select2').addEventListener('input', (event) => {
-  // Call the handleSelection function when the 'layer-select' option is changed
+
   handleSelection2();
 });
 document.getElementById("navigateButton").addEventListener("click", function() {
@@ -714,9 +713,9 @@ showLayer('HP_mean', 2002,mapRight);
 
  });      
 };
-// Load layers for both maps
+
 loadLayers(mapLeft);
-// Load layers for both maps
+
 loadLayers(mapRight);
 
     </script>

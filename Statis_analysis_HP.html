@@ -9,12 +9,12 @@
 </head>
 <body>
 <div id="myChart" style="width: 600px;height:400px;"></div>
-<input type="button" value="change" id="changeButton" onclick="changeStyle()">
+<input type="button" style="background-color: grey;" value="change" id="changeButton" onclick="changeStyle()">
 
 <script>
     const geojsonURLNewhame = 'https://raw.githubusercontent.com/X-Fan-Jack/tube-empower-london-regeneration/jack/data/msoa_geojson_NH_data.geojson';
     var chartStyle = 'Map';
-    var datafilter = 'HP_mean_change_2002_2012';  // Change the data which you want to show
+    var datafilter = 'HP_mean_change_2002_2012';  
     var mapOption, barOption;
     var dataMax, dataMin;
     var data_Newham;
@@ -22,7 +22,7 @@
         "type": "FeatureCollection",
         "features": []
     };
-    // Set the max/min value
+
     dataMax = 3.01;
     dataMin = 1.412;
 
@@ -30,13 +30,12 @@
 
     myChart.showLoading();
 
-    // Load GeoJSON data using XMLHttpRequest
+
     var xhr = new XMLHttpRequest();
     xhr.open('GET', geojsonURLNewhame);
     xhr.send();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            // Parse GeoJSON data
             data_Newham = JSON.parse(xhr.responseText);
 
             for (const feature of data_Newham.features) {
@@ -49,11 +48,8 @@
                 });
             }
 
-
-            // Add map component
             echarts.registerMap('Newham', {geoJSON: data_json});
 
-            // { name: properties.MSOA_NAME , value: properties[filterField]}
             var data = filterDataByField(datafilter, data_json);
             data.sort(function (a, b) {
                 return a.value - b.value;
@@ -76,7 +72,6 @@
                     max: dataMax,
                     precision: 10,
                     inRange: {
-                        // prettier-ignore
                         color: ['#313695',
                             '#4575b4',
                             '#e0f3f8',
@@ -90,7 +85,6 @@
                 },
                 toolbox: {
                     show: true,
-                    //orient: 'vertical',
                     left: 'left',
                     top: 'top',
                     feature: {
@@ -131,7 +125,7 @@
                     axisLabel: {
                         rotate: 30,
                         textStyle: {
-                            fontSize: 8, // 设置字体大小
+                            fontSize: 8, 
                         }
                     },
                     data: data.map(function (item) {
@@ -149,7 +143,6 @@
                 }
             };
 
-            // myChart.setOption(barOption);
             loadChart();
 
             myChart.hideLoading();
@@ -165,29 +158,23 @@
             return {name: properties.MSOA_NAME, value: properties[filterField]};
         });
 
-        // 最后，返回筛选后的数据
         return filteredFeatures;
     }
 
     function changeStyle() {
         if (chartStyle === 'Map') {
-            // myChart.setOption(barOption);
             chartStyle = 'Bar';
         } else if (chartStyle === 'Bar') {
-            // myChart.setOption(mapOption);
             chartStyle = 'Map';
         }
         loadChart();
-        // console.log("You have changed the style to " + chartStyle);
     };
 
     function loadChart() {
         if (chartStyle === 'Map') {
             myChart.setOption(mapOption, true);
-            // myChart.setOption(mapOption);
         } else if (chartStyle === 'Bar') {
             myChart.setOption(barOption, true);
-            // myChart.setOption(barOption);
         }
     }
 

@@ -168,7 +168,7 @@
 	}
 
     .mapboxgl-ctrl-top-right {
-    right: 60px !important;
+    top: 80px !important;
 }
     </style>
 <body>
@@ -323,7 +323,6 @@ function addCentroidLayerWithAttribute(year, attribute, stops, stops2) {
                         ['linear'],
                         ['get', attribute + '_' + year],
                         ...stops2
-                     // Adjust these values to control the height of the cylinders
                     ],
                     'fill-extrusion-opacity': 1,
                     'fill-extrusion-base': 0
@@ -546,7 +545,7 @@ let intervalId;
     years.forEach(year => {
 
         addLayerWithAttribute(year, 'POP', popDensityStops);
-        addCentroidLayerWithAttribute(year, 'POP',popDensityStops, popDensityHeightStops); // Add this line
+        addCentroidLayerWithAttribute(year, 'POP',popDensityStops, popDensityHeightStops); 
         addLayerWithAttribute(year, 'HP_mean', housePriceStops);
     addCentroidLayerWithAttribute(year, 'HP_mean', housePriceStops, housePriceHeightStops);
     addLayerWithAttribute(year, 'INC_Mean', incomeStops);
@@ -556,7 +555,7 @@ let intervalId;
 
     years.forEach(year => {
         map.setLayoutProperty('layer-' + year + '-POP', 'visibility', 'none');
-        map.setLayoutProperty('layer-' + year + '-POP-centroid', 'visibility', 'none'); // Add this line
+        map.setLayoutProperty('layer-' + year + '-POP-centroid', 'visibility', 'none'); 
         map.setLayoutProperty('layer-' + year + '-HP_mean', 'visibility', 'none');
     map.setLayoutProperty('layer-' + year + '-HP_mean-centroid', 'visibility', 'none');
     map.setLayoutProperty('layer-' + year + '-INC_Mean', 'visibility', 'none');
@@ -576,8 +575,7 @@ let intervalId;
     if (year && attribute) {
         map.setLayoutProperty('layer-' + year + '-' + attribute, 'visibility', 'visible');
         map.setLayoutProperty('layer-' + year + '-' + attribute + '-centroid', 'visibility', 'visible');
-    
-        // Update overlay content based on the attribute selected
+
         let overlayText;
         switch(attribute) {
             case 'POP':
@@ -594,7 +592,7 @@ let intervalId;
         }
         document.querySelector('.map-overlay-inner h2').innerText = overlayText;
     }
-    // Call updateLegend
+
     updateLegend(attribute);
 }
 
@@ -607,7 +605,6 @@ document.getElementById('layer-select').addEventListener('change', (event) => {
 
 
 
-// Call updateLegend when the slider is moved
 document.getElementById('slider').addEventListener('input', (event) => {
     let year = years[event.target.value];
     document.getElementById('year').innerText = year;
@@ -627,10 +624,9 @@ document.getElementById('startButton').addEventListener('click', startAnimation)
             showLayer(attribute, year);
         }
 
-        // Update event listener for the slider
         slider.addEventListener('input', updateSlider);
 
-        // Add event listener to the slider
+
         document.getElementById('slider').addEventListener('input', (event) => {
             let year = years[event.target.value];
             document.getElementById('year').innerText = year;

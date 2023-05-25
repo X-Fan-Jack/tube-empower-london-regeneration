@@ -45,7 +45,7 @@
     border-radius: 5px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     z-index: 1;
-    overflow: hidden; /* Add this line to prevent the content from showing outside */
+    overflow: hidden; 
    background-image: url(fd-images/bg.png);
    background-color: rgba(255,255,255,0);
    background-size: 100% 100%;
@@ -67,7 +67,6 @@
 .slider {
     width: 100%;
     margin: 10px 0;
-    /* Set the color of the slider track */
     background-color: #ffffff;
     
 }
@@ -125,7 +124,7 @@
     font-family: sans-serif;
     overflow-y: scroll;
     background-color: #fafafa;
-    padding-bottom: 20px; /* Add this line */
+    padding-bottom: 20px; 
     scroll-snap-type: y mandatory;
     overflow-y: scroll;
 }
@@ -358,7 +357,7 @@ const colorMap = {
 
 values.forEach((value) => {
   beforeMap.addLayer({
-    'id': `footprint-${value}`, // Use a unique ID for each layer based on the value
+    'id': `footprint-${value}`, 
     'type': 'fill',
     'source': {
       'type': 'vector',
@@ -366,18 +365,17 @@ values.forEach((value) => {
     },
     'source-layer': 'footprint',
     'layout': {
-      'visibility': 'none' // Set the initial visibility of all layers to 'none'
+      'visibility': 'none'
     },
     'paint': {
-      'fill-color': colorMap[value], // Adjust the color as needed
+      'fill-color': colorMap[value], 
       'fill-opacity': 1
     },
-    'filter': ['==', 'id', value] // Use the value from the list for the filter
+    'filter': ['==', 'id', value] 
   });
 });
 
 
-// Update the showValue function
 function showValue(currentValue) {
   if (currentValue === null) {
     years.forEach((year) => {
@@ -407,7 +405,6 @@ function showValue(currentValue) {
 
 
 
-// Add the input event listener for the slider
 const slider = document.getElementById('slider');
 slider.addEventListener('input', () => {
   const currentSliderValue = parseInt(slider.value);
@@ -422,7 +419,6 @@ slider.addEventListener('input', () => {
   }
 });
 
-// Add the toggleValue function
 function toggleValue(value) {
   const layerId = `footprint-${value}`;
   const currentVisibility = beforeMap.getLayoutProperty(layerId, 'visibility');
@@ -440,10 +436,9 @@ function toggleValue(value) {
 const years = [2007, 2009, 2011, 2013, 2015, 2017, 2019, 2021];
 
 years.forEach((year) => {
-  // Get the button with the corresponding year ID
+
   const button = document.getElementById(year.toString());
 
-  // Add the click event listener to the button
   button.addEventListener("click", () => {
     toggleValue(`dog_${year}`);
     toggleValue(`stratford_${year}`);
@@ -463,11 +458,9 @@ location2Button.addEventListener("click", () => {
 
 
 
-// Add variables for the animation
 let animation;
 let animationRunning = false;
 
-// Add the animateSlider function
 function animateSlider() {
   const slider = document.getElementById("slider");
   const maxSliderValue = parseInt(slider.max);
@@ -475,14 +468,13 @@ function animateSlider() {
   if (parseInt(slider.value) < maxSliderValue) {
     slider.value = parseInt(slider.value) + 1;
     slider.dispatchEvent(new Event("input"));
-    animation = setTimeout(animateSlider, 1000); // Adjust the duration between updates (1000 ms = 1 second)
+    animation = setTimeout(animateSlider, 1000); 
   } else {
     clearTimeout(animation);
     animationRunning = false;
   }
 }
 
-// Add the event listener for the Start button
 const startButton = document.getElementById("startButton");
 startButton.addEventListener("click", () => {
   if (!animationRunning) {
@@ -491,7 +483,6 @@ startButton.addEventListener("click", () => {
   }
 });
 
-// Add the event listener for the Stop button
 const stopButton = document.getElementById("stopButton");
 stopButton.addEventListener("click", () => {
   clearTimeout(animation);
@@ -522,7 +513,7 @@ const afterMap = new mapboxgl.Map({
 
     const mapWidth = beforeMap.getContainer().offsetWidth;
 
-// Move the swiper to the rightmost of the screen initially
+
 map.setSlider(mapWidth);
 
 
@@ -642,7 +633,6 @@ const bounds = element.getBoundingClientRect();
 return bounds.top < window.innerHeight && bounds.bottom > 0;
 }
 
-    // On every scroll event, check which element is on screen
     document.getElementById("features").onscroll = () => {
 
         for (const chapterName in chapters) {
@@ -661,27 +651,23 @@ return bounds.top < window.innerHeight && bounds.bottom > 0;
 
     if (features.style.display === "none") {
         features.style.display = "block";
-        overlay.classList.add('hidden'); // hide the old overlay
-        newOverlay.classList.remove('hidden'); // show the new overlay
-        document.body.style.overflow = 'scroll'; // Show scrollbar of body
+        overlay.classList.add('hidden'); 
+        newOverlay.classList.remove('hidden'); 
+        document.body.style.overflow = 'scroll'; 
     } else {
         features.style.display = "none";
-        overlay.classList.remove('hidden'); // show the old overlay
-        newOverlay.classList.add('hidden'); // hide the new overlay
-        document.body.style.overflow = 'visible'; // Hide scrollbar of body
+        overlay.classList.remove('hidden'); 
+        newOverlay.classList.add('hidden'); 
+        document.body.style.overflow = 'visible'; 
     }
 }
 
 
-// Get the button by its ID
 const button1 = document.getElementById('toggleFeatures');
 
-// Add click event listener
 button1.addEventListener('click', function() {
-    // Move the swiper to the leftmost of the screen
     map.setSlider(0);
 
-    // Also toggle features
     toggleFeatures();
 });
 
@@ -696,8 +682,8 @@ panelControl.addEventListener('click', () => {
 document.getElementById("back-to-land-use").addEventListener("click", function() {
     document.getElementById('new-overlay').classList.add('hidden');
     document.getElementById('overlay').classList.remove('hidden');
-    document.getElementById('features').style.display = 'none'; // Hide features
-    document.body.style.overflow = 'visible'; // Make body scrollbar normal
+    document.getElementById('features').style.display = 'none'; 
+    document.body.style.overflow = 'visible'; 
 
 
 });

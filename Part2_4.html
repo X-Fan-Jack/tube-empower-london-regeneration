@@ -168,7 +168,7 @@
 }
 
 .mapboxgl-ctrl-top-right {
-    right: 60px !important;
+    top: 80px !important;
 }
 
     </style>
@@ -267,14 +267,14 @@ map.addLayer({
 
         
 
-        map.addLayer({        //Add the fill layer. It is not visible (opacity 0) and is used only as the basis of the hover selection
+        map.addLayer({       
             id: 'LocalAuthorities',
             type: 'fill',
             source: {
                 type: 'vector',
-                url: 'mapbox://pinlyu.aackmt82' // Mapbox tileset Map ID
+                url: 'mapbox://pinlyu.aackmt82' 
             },
-            'source-layer': 'newdata_area', // name of tilesets
+            'source-layer': 'newdata_area', 
             'layout': {
                 'visibility': 'visible'
             },
@@ -289,9 +289,9 @@ map.addLayer({
             type: 'line',
             source: {
                 type: 'vector',
-                url: 'mapbox://pinlyu.aackmt82' // Your Mapbox tileset Map ID
+                url: 'mapbox://pinlyu.aackmt82'
             },
-            'source-layer': 'newdata_area', // name of tilesets
+            'source-layer': 'newdata_area', 
             paint: {
                 'line-color': '#fd8d3c',
                 'line-width': 5
@@ -326,13 +326,13 @@ map.addLayer({
     svg.append("g")
         .call(d3.axisLeft(y));
 
-    // Add X axis label
+
     svg.append("text")
         .attr("transform", "translate(" + (width/2) + " ," + (height + margin.bottom/2) + ")")
         .style("text-anchor", "middle")
         .text(xLabel);
 
-    // Add Y axis label
+
     svg.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 0 - margin.left/2)
@@ -341,7 +341,6 @@ map.addLayer({
         .style("text-anchor", "middle")
         .text(yLabel);  
 
-    // Add chart title
     svg.append("text")
         .attr("x", (width / 2))             
         .attr("y", 0 - (margin.top / 2))
@@ -349,12 +348,12 @@ map.addLayer({
         .style("font-size", "20px") 
         .text(title);
 
-    // Define the line
+
     var line = d3.line()
         .x(function(d) { return x(d.Year); })
         .y(function(d) { return y(d.Density); });
 
-    // Add the line path
+
     svg.append("path")
         .data([data])
         .attr("class", "line")
@@ -392,13 +391,13 @@ var y = d3.scaleLinear()
 svg.append("g")
     .call(d3.axisLeft(y));
 
-// X Axis label
+
 svg.append("text")
     .attr("transform", "translate(" + (width/2) + " ," + (height + margin.bottom/2) + ")")
     .style("text-anchor", "middle")
     .text(xLabel);
 
-// Y Axis label
+
 svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left/2)
@@ -443,7 +442,7 @@ map.on('mousemove', function(e) {
 
         map.setFilter('lahighlight', ['==', 'Code', laName]);
 
-        // Set the popup content and location
+
         popup_name.setLngLat(e.lngLat)
             .setHTML(areaName)
             .addTo(map);
@@ -505,35 +504,35 @@ map.on('click', 'LocalAuthorities', function (e) {
     
     popup._content.style.width = '700px';
     popup._content.style.height = '450px';
-    popup._content.style.position = 'relative'; // make sure the button is positioned relative to the popup
+    popup._content.style.position = 'relative'; 
 
     var originalContent = "<div id='chart' class='line-chart-popup'></div>";
     var newContent = "<div id='barchart' class='bar-chart-popup'></div>";
 
-    // flag to track if the original content is displayed
+
     var originalContentDisplayed = true;
 
-    // add the event listener to the button
+
 document.getElementById('changeContentButton').addEventListener('click', function() {
-    // check the flag and toggle the content and the flag
+
     if (originalContentDisplayed) {
         popup.setHTML(newContent + "<button id='changeContentButton' style='position: absolute; top: 30px; right: 30px;'>Change to line chart</button>");
         originalContentDisplayed = false;
-        // recreate the bar chart in the new container
+ 
         createBarChart(data1, '#barchart', 'steelblue', chartTitle1, xLabel1, yLabel1);
     } else {
         popup.setHTML(originalContent + "<button id='changeContentButton' style='position: absolute; top: 30px; right: 30px;'>Change to bar chart</button>");
         originalContentDisplayed = true;
-        // recreate the line chart in the new container
+
         createLineChart(data, '#chart', 'steelblue', chartTitle, xLabel, yLabel);
     }
     
-    // add the event listener to the new button
+
     document.getElementById('changeContentButton').addEventListener('click', arguments.callee);
 });
 
 
-// Define chart title and labels based on selected option
+
 let chartTitle, xLabel, yLabel;
     switch(selectedAttribute) {
         case 'HP_mean_change':
@@ -553,7 +552,7 @@ let chartTitle, xLabel, yLabel;
             break;
     }
 
-    // Define chart title and labels based on selected option
+
 let chartTitle1, xLabel1, yLabel1;
     switch(selectedAttribute) {
         case 'HP_mean_change':
@@ -578,13 +577,12 @@ let chartTitle1, xLabel1, yLabel1;
 
 });
 
-    // When the cursor enters a feature in the 'maine' layer, prepare for a
-    // popup to be shown.
+
     map.on('mouseenter', 'LocalAuthorities', function () {
         map.getCanvas().style.cursor = 'pointer';
     });
 
-    // When the cursor leaves a feature in the 'maine' layer, remove the popup.
+
     map.on('mouseleave', 'LocalAuthorities', function () {
         map.getCanvas().style.cursor = '';
     });  
@@ -736,7 +734,7 @@ function showLayer(attribute) {
 
 
 
-let selectedAttribute = 'HP_mean_change'; // Initialize with the default attribute
+let selectedAttribute = 'HP_mean_change'; 
 
 document.getElementById('layer-select').addEventListener('change', (event) => {
     selectedAttribute = event.target.value;

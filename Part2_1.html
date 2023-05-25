@@ -97,8 +97,7 @@ body {
     }
 
     .mapboxgl-ctrl-top-right {
-    top: 10px !important;
-    right: 60px !important;
+    top: 80px !important;
 }
 
 </style>
@@ -135,7 +134,7 @@ body {
 
     let animationState = {
     timer: null,
-    paused: true,  // initially set paused to true
+    paused: true, 
     currentLineFeature: null,
     currentLineId: null,
     currentIndex: 0
@@ -208,10 +207,10 @@ let popup;
             'id': circleId + 'Label','type': 'symbol',
             'source': circleId,
             'layout': {
-                'text-field': ['get', 'Station'], // This assumes 'name' is a property in your features.
+                'text-field': ['get', 'Station'], 
                 'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
                 'text-size': 15,
-                'text-offset': [0, 2] // Offset the labels a bit to the top of the circle
+                'text-offset': [0, 2] 
             },
             'paint': {
                 'text-color': '#f7f7f7'
@@ -219,14 +218,14 @@ let popup;
         });
         if (animationState.currentIndex === 15) {
         animationState.paused = true;
-        window.clearInterval(animationState.timer);  // stop the timer
+        window.clearInterval(animationState.timer);  
 
         popup = new mapboxgl.Popup({closeOnClick: false})
             .setLngLat(circleFeature.geometry.coordinates)
             .setHTML('This is the site before and after the split jubilee expansion')
             .addTo(map);
 
-        // Set a timeout to automatically close the popup after 5 seconds
+
         setTimeout(function() {
             popup.remove();
             animationState.paused = false;
@@ -241,7 +240,7 @@ let popup;
             }
         });
 
-        resolve();  // resolve the promise
+        resolve();  
     }
   
 
@@ -255,14 +254,14 @@ let popup;
     const data = await response.json();
 
     for (let i = 0; i < data.features.length; i++) {
-        // For each iteration, we add a circle, then animate the line
 
-        // Add circle
+
+
         const circleFeature = circleData.features[i];
         const circleId = 'circle' + i;
         addCircle(circleFeature, circleId);
 
-        // Animate line
+
         const lineFeature = data.features[i];
         const lineId = lineFeature.properties.id;
         animationState.currentLineFeature = lineFeature;
@@ -273,7 +272,7 @@ let popup;
     }
 
 
-// Now that all animations are done, you can add your buffer layer.
+
 const bufferDataResponse = await fetch('https://raw.githubusercontent.com/NoodlesLYU/digital_cw_demo/main/buffer_Jubilee_1km.geojson');
     const bufferData = await bufferDataResponse.json();
 
@@ -281,10 +280,10 @@ const bufferDataResponse = await fetch('https://raw.githubusercontent.com/Noodle
 
     map.addLayer({
         'id': 'bufferLayer',
-        'type': 'fill', // Assuming your buffer is a polygon
+        'type': 'fill', 
         'source': 'bufferSource',
         'layout': {
-        'visibility': 'none',  // Set initial visibility to none
+        'visibility': 'none',  
     },
         'paint': {
             'fill-color': '#bdbdbd',
@@ -292,7 +291,7 @@ const bufferDataResponse = await fetch('https://raw.githubusercontent.com/Noodle
         }
     });
 
-    // Adding areas_before_extension layer
+
     const areasBeforeExtensionResponse = await fetch('https://raw.githubusercontent.com/NoodlesLYU/digital_cw_demo/main/area_before_extension.geojson');
     const areasBeforeExtensionData = await areasBeforeExtensionResponse.json();
 
@@ -300,10 +299,10 @@ const bufferDataResponse = await fetch('https://raw.githubusercontent.com/Noodle
 
     map.addLayer({
         'id': 'areasBeforeExtensionLayer',
-        'type': 'fill', // Assuming your data is a polygon
+        'type': 'fill', 
         'source': 'areasBeforeExtensionSource',
         'layout': {
-        'visibility': 'none',  // Set initial visibility to none
+        'visibility': 'none',  
     },
         'paint': {
             'fill-color': '#41ab5d',
@@ -311,7 +310,6 @@ const bufferDataResponse = await fetch('https://raw.githubusercontent.com/Noodle
         }
     });
 
-    // Adding extension_area1 layer
     const extensionArea1Response = await fetch('https://raw.githubusercontent.com/NoodlesLYU/digital_cw_demo/main/extension_area1.geojson');
     const extensionArea1Data = await extensionArea1Response.json();
 
@@ -319,10 +317,10 @@ const bufferDataResponse = await fetch('https://raw.githubusercontent.com/Noodle
 
     map.addLayer({
         'id': 'extensionArea1Layer',
-        'type': 'fill', // Assuming your data is a polygon
+        'type': 'fill', 
         'source': 'extensionArea1Source',
         'layout': {
-        'visibility': 'none',  // Set initial visibility to none
+        'visibility': 'none',  
     },
         'paint': {
             'fill-color': '#6baed6',
@@ -335,15 +333,14 @@ const bufferDataResponse = await fetch('https://raw.githubusercontent.com/Noodle
 
 
 document.getElementById('toggleAnimation').addEventListener('click', () => {
-    if (!animationStarted) {  // Add this condition
-        // if animation has not started yet, start it
+    if (!animationStarted) {  
         animationState.paused = false;
         animateLine(animationState.currentLineFeature, animationState.currentLineId);
-        animationStarted = true;  // Set to true after animation starts
+        animationStarted = true; 
     } else {
-        // if animation has already started, toggle between pause/play
+
         animationState.paused = !animationState.paused;
-        if (popup) popup.remove();  // remove the popup
+        if (popup) popup.remove();  
         if (!animationState.paused && animationState.timer === null) {
             animateLine(animationState.currentLineFeature, animationState.currentLineId);
         }
